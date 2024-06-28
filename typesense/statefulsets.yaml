@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: typesense
+    service: typesense-headless
+  name: typesense
+  namespace: typesense
+spec:
+  podManagementPolicy: Parallel
+  replicas: 3
+  selector:
+    matchLabels:
+      app: typesense
+      service: typesense-headless
+  serviceName: typesense-headless
+  template:
+    metadata:
+      labels:
+        app: typesense
+        service: typesense-headless
+    spec:
+      containers:
+      - command:
+        - /opt/typesense-server
+        - -d
+        - /usr/share/typesense/data
+        - -a
+        - Mycomplexpassword#6546
+        - --api-port
+        - "8108"
+        - --peering-port
+        - "8107"
+        - --nodes
+        - /usr/share/typesense/nodes
+        - --enable-cors
+        - --cors-domains
+        - "http://docusaurus.typesense.svc.cluster.local, http://blueprints.hypelens.de, https://blueprints.hypelens.de"
+        - --reset-peers-on-error
+        image: typesense/typesense:26.0
+        env:
+        - name: TYPESENSE_ENABLE_CORS
+          value: "true"
+        name: typesense
+        ports:
+        - containerPort: 8108
+          name: http
+        resources:
+          limits:
+            cpu: 1024m
+            memory: 512Mi
+          requests:
+            cpu: 128m
+            memory: 112Mi
+        volumeMounts:
+        - mountPath: /usr/share/typesense
+          name: nodeslist
+        - mountPath: /usr/share/typesense/data
+          name: data
+      securityContext:
+        fsGroup: 2000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        runAsUser: 10000
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - configMap:
+          items:
+          - key: nodes
+            path: nodes
+          name: nodeslist
+        name: nodeslist
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: csi-disk

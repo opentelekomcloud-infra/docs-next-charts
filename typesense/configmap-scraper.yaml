@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scraper-config
+  namespace: typesense
+data:
+  config: "{\"index_name\":\"docs-next\",\"start_urls\":[{\"url\":\"http://docusaurus.typesense.svc.cluster.local\"}],\"js_render\":true,\"selectors\":{\"lvl0\":\"h1\",\"lvl1\":\"h2\",\"lvl2\":\"h3\",\"lvl3\":\"h4\",\"lvl4\":\"h5\",\"lvl5\":\"h6\",\"text\":\"p, li\"},\"strip_chars\":\" .,;:#\"}"

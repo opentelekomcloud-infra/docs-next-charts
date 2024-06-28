@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: typesense-scraper
+  namespace: typesense
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: typesense-scraper
+              image: typesense/docsearch-scraper:0.9.1
+              env:
+              - name: CONFIG
+                valueFrom:
+                  configMapKeyRef:
+                    name: scraper-config
+                    key: config
+              - name: TYPESENSE_API_KEY
+                value: Mycomplexpassword#6546
+              - name: TYPESENSE_HOST
+                value: typesense-headless.typesense.svc.cluster.local
+              - name: TYPESENSE_PORT
+                value: "8108"
+              - name: TYPESENSE_PROTOCOL
+                value: http
+              resources:
+                limits:
+                  cpu: 1024m
+                  memory: 512Mi
+                requests:
+                  cpu: 128m
+                  memory: 112Mi
+          restartPolicy: OnFailure

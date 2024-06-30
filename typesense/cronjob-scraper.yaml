@@ -5,8 +5,10 @@ metadata:
   namespace: typesense
 spec:
   schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
+      backoffLimit: 0
       template:
         spec:
           containers:
@@ -17,9 +19,12 @@ spec:
                 valueFrom:
                   configMapKeyRef:
                     name: scraper-config
-                    key: config
+                    key: config.json
               - name: TYPESENSE_API_KEY
-                value: Mycomplexpassword#6546
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: typesense-api-key
               - name: TYPESENSE_HOST
                 value: typesense-headless.typesense.svc.cluster.local
               - name: TYPESENSE_PORT
@@ -33,4 +38,4 @@ spec:
                 requests:
                   cpu: 128m
                   memory: 112Mi
-          restartPolicy: OnFailure
+          restartPolicy: Never

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: docusaurus
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: docusaurus
@@ -25,29 +25,30 @@ metadata:
   name: docusaurus
   namespace: typesense
 spec:
+  # type: LoadBalancer
   ports:
   - name: http
     port: 80
-    targetPort: 3000
+    targetPort: 80
   selector:
     app: docusaurus
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: docusaurus
-  namespace: typesense
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.class: nginx
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: docusaurus
-            port:
-              number: 80
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: docusaurus
+#   namespace: typesense
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     kubernetes.io/ingress.class: nginx
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: docusaurus
+#             port:
+#               number: 80

@@ -35,7 +35,7 @@ spec:
         - name: TYPESENSE_ENABLE_CORS
           value: "true"
         - name: TYPESENSE_CORS_DOMAINS
-          value: "http://blueprints.hypelens.de/"
+          value: "http://blueprints.hypelens.de,https://blueprints.hypelens.de,http://docusaurus.typesense.svc.cluster.local"
         - name: TYPESENSE_RESET_PEERS_ON_ERROR
           value: "true"
         - name: TYPESENSE_API_KEY

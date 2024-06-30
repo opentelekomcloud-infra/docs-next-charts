@@ -6,7 +6,7 @@ metadata:
   labels:
     app: docusaurus
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: docusaurus
@@ -16,23 +16,35 @@ spec:
         app: docusaurus
     spec:
       containers:
-      - name: docusaurus
-        image: akyriako78/docsnext:latest
+        - name: docusaurus
+          image: akyriako78/docsnext:latest
+          env:
+            - name: TYPESENSE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys
+                  key: typesense-api-key
+            - name: TYPESENSE_HOST
+              value: blueprints.hypelens.de
+            - name: TYPESENSE_PORT
+              value: "8108"
+            - name: TYPESENSE_PROTOCOL
+              value: http
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: docusaurus
-  namespace: typesense
-spec:
-  # type: LoadBalancer
-  ports:
-  - name: http
-    port: 80
-    targetPort: 80
-  selector:
-    app: docusaurus
----
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: docusaurus
+#   namespace: typesense
+# spec:
+#   # type: LoadBalancer
+#   ports:
+#   - name: http
+#     port: 80
+#     targetPort: 80
+#   selector:
+#     app: docusaurus
+# ---
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress
 # metadata:

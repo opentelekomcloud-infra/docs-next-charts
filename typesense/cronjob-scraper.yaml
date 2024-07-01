@@ -26,7 +26,7 @@ spec:
                     name: api-keys
                     key: typesense-api-key
               - name: TYPESENSE_HOST
-                value: typesense-headless.typesense.svc.cluster.local
+                value: blueprints.hypelens.de
               - name: TYPESENSE_PORT
                 value: "8108"
               - name: TYPESENSE_PROTOCOL

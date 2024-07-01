@@ -23,7 +23,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: api-keys
-                  key: typesense-api-key
+                  key: search-api-key
             - name: TYPESENSE_HOST
               value: blueprints.hypelens.de
             - name: TYPESENSE_PORT

@@ -7,11 +7,13 @@ data:
   nginx.conf: |
     events {}
     http {
-      # allow 80.158.32.48;
-      # deny all;
-
       server {
         listen 80;
+
+        valid_referers server_names docs-next.hypelens.de;   
+        if ($invalid_referer) {  
+          return 403;     
+        }
 
         location / {
           proxy_pass http://typesense-headless:8108/;
@@ -64,3 +66,29 @@ spec:
     port: 80
     targetPort: 80
     name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: typesense-reverse-proxy
+  namespace: docs-next
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/elb.class: union
+    kubernetes.io/elb.id: ddc29f88-5763-497c-b49b-edfeadaf4b8e
+    kubernetes.io/elb.port: '80'
+spec:
+  ingressClassName: cce
+  rules:
+  - host: docs-search.hypelens.de
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: typesense-reverse-proxy
+            port:
+              number: 80
+        property:
+              ingress.beta.kubernetes.io/url-match-mode: STARTS_WITH

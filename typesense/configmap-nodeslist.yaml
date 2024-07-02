@@ -2,6 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nodeslist
-  namespace: typesense
+  namespace: docs-next
 data:
-  nodes: typesense-0.typesense-headless.typesense.svc.cluster.local:8107:8108,typesense-1.typesense-headless.typesense.svc.cluster.local:8107:8108,typesense-2.typesense-headless.typesense.svc.cluster.local:8107:8108
+  nodes: typesense-0.typesense-headless.docs-next.svc.cluster.local:8107:8108,typesense-1.typesense-headless.docs-next.svc.cluster.local:8107:8108,typesense-2.typesense-headless.docs-next.svc.cluster.local:8107:8108

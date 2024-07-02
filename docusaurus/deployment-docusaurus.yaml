@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: docusaurus
-  namespace: typesense
+  namespace: docs-next
   labels:
     app: docusaurus
 spec:
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: docusaurus
-          image: akyriako78/docsnext:beta.0
+          image: akyriako78/docsnext:beta.4
           env:
             - name: TYPESENSE_API_KEY
               valueFrom:
@@ -25,31 +25,30 @@ spec:
                   name: api-keys
                   key: search-api-key
             - name: TYPESENSE_HOST
-              value: blueprints.hypelens.de
+              value: docs-search.hypelens.de
             - name: TYPESENSE_PORT
               value: "8108"
             - name: TYPESENSE_PROTOCOL
               value: http
 ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: docusaurus
-#   namespace: typesense
-# spec:
-#   # type: LoadBalancer
-#   ports:
-#   - name: http
-#     port: 80
-#     targetPort: 80
-#   selector:
-#     app: docusaurus
-# ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docusaurus
+  namespace: docs-next
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: docusaurus
+---
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress
 # metadata:
 #   name: docusaurus
-#   namespace: typesense
+#   namespace: docs-next
 #   annotations:
 #     nginx.ingress.kubernetes.io/rewrite-target: /
 #     kubernetes.io/ingress.class: nginx

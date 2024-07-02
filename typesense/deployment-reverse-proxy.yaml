@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reverse-proxy-config
+  namespace: docs-next
+data:
+  nginx.conf: |
+    events {}
+    http {
+      # allow 80.158.32.48;
+      # deny all;
+
+      server {
+        listen 80;
+
+        location / {
+          proxy_pass http://typesense-headless:8108/;
+          proxy_pass_request_headers on;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typesense-reverse-proxy
+  namespace: docs-next
+  labels:
+    app: typesense-reverse-proxy
+spec:
+  selector:
+    matchLabels:
+      app: typesense-reverse-proxy
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: typesense-reverse-proxy
+    spec:
+      containers:
+        - name: typesense-reverse-proxy
+          image: nginx:alpine
+          ports:
+          - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: reverse-proxy-config
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: typesense-reverse-proxy
+  namespace: docs-next
+spec:
+  selector:
+    app: typesense-reverse-proxy
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    name: http

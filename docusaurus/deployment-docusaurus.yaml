@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: docusaurus
-          image: akyriako78/docsnext:rc.0
+          image: akyriako78/docsnext:rc.2
           env:
             - name: TYPESENSE_API_KEY
               valueFrom:

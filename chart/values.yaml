@@ -6,7 +6,7 @@ docusaurus:
       typesenseProtocol: http
     image:
       repository: akyriako78/docs-next-preview
-      tag: latest
+      imageTag: latest
   ports:
   - name: http
     port: 80

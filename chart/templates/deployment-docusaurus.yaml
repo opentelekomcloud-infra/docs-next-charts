@@ -32,7 +32,7 @@ spec:
           value: {{ quote .Values.docusaurus.docusaurus.env.typesenseProtocol }}
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
-        image: {{ .Values.docusaurus.docusaurus.image.repository }}:{{ .Values.docusaurus.docusaurus.image.tag
+        image: {{ .Values.docusaurus.docusaurus.image.repository }}:{{ .Values.docusaurus.docusaurus.image.imageTag
           | default .Chart.AppVersion }}
         name: docusaurus
         resources: {}

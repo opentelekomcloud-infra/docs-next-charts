@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "typesense.fullname" . }}-nodeslist
+  labels:
+  {{- include "typesense.labels" . | nindent 4 }}
+data:
+  nodes: {{ .Release.Name }}-ts-0.{{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local:8107:8108,{{ .Release.Name }}-ts-1.{{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local:8107:8108,{{ .Release.Name }}-ts-2.{{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local:8107:8108
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "typesense.fullname" . }}-api-keys
+  labels:
+  {{- include "typesense.labels" . | nindent 4 }}
+data:
+  typesense-api-key: {{ required "apiKeys.typesenseApiKey is required" .Values.apiKeys.typesenseApiKey
+    | b64enc | quote }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "typesense.fullname" . }}-ts
+  labels:
+    app: typesense
+spec:
+  podManagementPolicy: Parallel
+  replicas: 3
+  selector:
+    matchLabels:
+      app: typesense
+  serviceName: {{ include "typesense.fullname" . }}-svc
+  template:
+    metadata:
+      labels:
+        app: typesense
+    spec:
+      containers:
+      - env:
+        - name: TYPESENSE_DATA_DIR
+          value: "/usr/share/typesense/data"
+        - name: TYPESENSE_API_PORT
+          value: "8108"
+        - name: TYPESENSE_PEERING_PORT
+          value: "8107"
+        - name: TYPESENSE_NODES
+          value: "/usr/share/typesense/nodes"
+        - name: TYPESENSE_ENABLE_CORS
+          value: "true"
+        - name: TYPESENSE_CORS_DOMAINS
+          value: "http://{{ .Values.docusaurus.host }},https://{{ .Values.docusaurus.host }},https://{{ .Values.typesenseReverseProxy.host }},http://{{ .Values.typesenseReverseProxy.host }}"
+          value: "true"
+        - name: TYPESENSE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: typesense-api-key
+              name: {{ include "typesense.fullname" . }}-api-keys
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: typesense/typesense:26.0
+        name: typesense
+        ports:
+        - containerPort: 8108
+          name: http
+        resources:
+          limits:
+            cpu: 1024m
+            memory: 512Mi
+          requests:
+            cpu: 128m
+            memory: 112Mi
+        volumeMounts:
+        - mountPath: /usr/share/typesense
+          name: nodeslist
+        - mountPath: /usr/share/typesense/data
+          name: data
+      securityContext:
+        fsGroup: 2000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        runAsUser: 10000
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - configMap:
+          items:
+          - key: nodes
+            path: nodes
+          name: {{ include "typesense.fullname" . }}-nodeslist
+        name: nodeslist
+  updateStrategy: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: csi-disk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "typesense.fullname" . }}-svc
+  labels:
+  {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    app: typesense
+  ports:
+  - name: http
+    port: 8108
+    targetPort: 8108

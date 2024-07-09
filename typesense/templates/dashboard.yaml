@@ -6,7 +6,7 @@ metadata:
     app: typesense-dashboard
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.dashboard.replicas }}
+  replicas: {{ .Values.typesenseDashboard.replicas }}
   selector:
     matchLabels:
       app: typesense-dashboard
@@ -21,8 +21,7 @@ spec:
       - env:
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
-        image: {{ .Values.dashboard.typesenseDashboard.image.repository }}:{{ .Values.dashboard.typesenseDashboard.image.tag
-          | default .Chart.AppVersion }}
+        image: ghcr.io/bfritscher/typesense-dashboard:latest
         name: typesense-dashboard
         resources: {}
 ---
@@ -33,9 +32,11 @@ metadata:
   labels:
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.dashboard.type }}
+  type: ClusterIP
   selector:
     app: typesense-dashboard
   {{- include "typesense.selectorLabels" . | nindent 4 }}
   ports:
-	{{- .Values.dashboard.ports | toYaml | nindent 2 }}
+  - name: http
+    port: 80
+    targetPort: 80

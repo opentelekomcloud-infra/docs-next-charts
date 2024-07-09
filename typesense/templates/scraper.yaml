@@ -33,21 +33,21 @@ spec:
                   key: typesense-api-key
                   name: {{ include "typesense.fullname" . }}-api-keys
             - name: TYPESENSE_HOST
-              value: {{ quote .Values.typesenseScraper.typesenseScraper.env.typesenseHost
-                }}
+              value: {{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local
             - name: TYPESENSE_PORT
-              value: {{ quote .Values.typesenseScraper.typesenseScraper.env.typesensePort
-                }}
+              value: "8108"
             - name: TYPESENSE_PROTOCOL
-              value: {{ quote .Values.typesenseScraper.typesenseScraper.env.typesenseProtocol
-                }}
+              value: http
             - name: KUBERNETES_CLUSTER_DOMAIN
               value: {{ quote .Values.kubernetesClusterDomain }}
-            image: {{ .Values.typesenseScraper.typesenseScraper.image.repository
-              }}:{{ .Values.typesenseScraper.typesenseScraper.image.tag | default
-              .Chart.AppVersion }}
+            image: typesense/docsearch-scraper:0.9.1
             name: typesense-scraper
-            resources: {{- toYaml .Values.typesenseScraper.typesenseScraper.resources
-              | nindent 10 }}
+            resources:
+                limits:
+                  cpu: 1024m
+                  memory: 512Mi
+                requests:
+                  cpu: 128m
+                  memory: 112Mi
           restartPolicy: Never
   schedule: {{ .Values.typesenseScraper.schedule | quote }}

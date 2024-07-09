@@ -44,21 +44,18 @@ spec:
       - env:
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
-        image: {{ .Values.typesenseReverseProxy.typesenseReverseProxy.image.repository
-          }}:{{ .Values.typesenseReverseProxy.typesenseReverseProxy.image.tag | default
-          .Chart.AppVersion }}
+        image: nginx:alpine
         name: typesense-reverse-proxy
         ports:
         - containerPort: 80
-        resources: {}
         volumeMounts:
-        - mountPath: /etc/nginx/nginx.conf
-          name: nginx-config
-          subPath: nginx.conf
+          - name: nginx-config
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
       volumes:
-      - configMap:
+      - name: nginx-config
+        configMap:
           name: {{ include "typesense.fullname" . }}-reverse-proxy-config
-        name: nginx-config
 ---
 apiVersion: v1
 kind: Service
@@ -67,12 +64,15 @@ metadata:
   labels:
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.typesenseReverseProxy.type }}
+  type: NodePort
   selector:
     app: typesense-reverse-proxy
   {{- include "typesense.selectorLabels" . | nindent 4 }}
   ports:
-	{{- .Values.typesenseReverseProxy.ports | toYaml | nindent 2 }}
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -93,7 +93,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ include "typesense.fullname" . }}-reverse-proxy'
+            name: {{ include "typesense.fullname" . }}-reverse-proxy
             port:
               number: {{ .Values.typesenseReverseProxy.port }}
         path: /

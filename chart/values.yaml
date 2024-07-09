@@ -1,0 +1,29 @@
+kubernetesClusterDomain: cluster.local
+reverseProxyConfig:
+  nginxConf: |-
+    events {}
+    http {
+      server {
+        listen 80;
+        valid_referers server_names preview.hypelens.de;
+        if ($invalid_referer) {
+          return 403;
+        }
+        location / {
+          proxy_pass http://typesense-headless:8108/;
+          proxy_pass_request_headers on;
+        }
+      }
+    }
+typesenseReverseProxy:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  replicas: 1
+  type: ClusterIP
+  typesenseReverseProxy:
+    image:
+      repository: nginx
+      tag: alpine

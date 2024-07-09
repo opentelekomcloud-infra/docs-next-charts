@@ -7,33 +7,8 @@ typesenseReverseProxy:
   host: docs-search-preview.hypelens.de
   port: 80
   elbId: 6d5ba18b-c302-4a0d-9951-d678bbad7a54
-  ports:
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 80
   replicas: 1
-  type: ClusterIP
-  typesenseReverseProxy:
-    image:
-      repository: nginx
-      tag: alpine
 typesenseScraper:
   schedule: '*/2 * * * *'
-  typesenseScraper:
-    env:
-      typesenseHost: typesense-svc
-      typesensePort: "8108"
-      typesenseProtocol: http
-    image:
-      repository: typesense/docsearch-scraper
-      tag: 0.9.1
-    resources:
-      limits:
-        cpu: 1024m
-        memory: 512Mi
-      requests:
-        cpu: 128m
-        memory: 112Mi
 docusaurus:
   host: preview.hypelens.de

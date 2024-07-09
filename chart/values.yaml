@@ -5,8 +5,8 @@ docusaurus:
       typesensePort: "8108"
       typesenseProtocol: http
     image:
+      imageTag: d1bd593
       repository: akyriako78/docs-next-preview
-      imageTag: latest
   ports:
   - name: http
     port: 80

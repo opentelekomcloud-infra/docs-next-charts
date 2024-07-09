@@ -2,18 +2,18 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "typesense.fullname" . }}-reverse-proxy-config
-  labels:
-  {{- include "typesense.labels" . | nindent 4 }}
 data:
-  nginxConf: |-
+  nginx.conf: |
     events {}
     http {
       server {
         listen 80;
-        valid_referers server_names {{ .Values.docusaurus.host }};
-        if ($invalid_referer) {
-          return 403;
+
+        valid_referers server_names {{ .Values.docusaurus.host }};   
+        if ($invalid_referer) {  
+          return 403;     
         }
+
         location / {
           proxy_pass http://{{ include "typesense.fullname" . }}-svc:8108/;
           proxy_pass_request_headers on;
@@ -27,35 +27,30 @@ metadata:
   name: {{ include "typesense.fullname" . }}-reverse-proxy
   labels:
     app: typesense-reverse-proxy
-  {{- include "typesense.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.typesenseReverseProxy.replicas }}
   selector:
     matchLabels:
       app: typesense-reverse-proxy
-    {{- include "typesense.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.typesenseReverseProxy.replicaCount }}
   template:
     metadata:
       labels:
         app: typesense-reverse-proxy
-      {{- include "typesense.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-      - env:
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
-        image: nginx:alpine
-        name: typesense-reverse-proxy
-        ports:
-        - containerPort: 80
-        volumeMounts:
-          - name: nginx-config
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
+        - name: typesense-reverse-proxy
+          image: nginx:alpine
+          ports:
+          - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
       volumes:
-      - name: nginx-config
-        configMap:
-          name: {{ include "typesense.fullname" . }}-reverse-proxy-config
+        - name: nginx-config
+          configMap:
+            name: {{ include "typesense.fullname" . }}-reverse-proxy-config
 ---
 apiVersion: v1
 kind: Service
@@ -67,7 +62,6 @@ spec:
   type: NodePort
   selector:
     app: typesense-reverse-proxy
-  {{- include "typesense.selectorLabels" . | nindent 4 }}
   ports:
     - protocol: TCP
       port: 80

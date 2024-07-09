@@ -20,10 +20,7 @@ spec:
           image: akyriako78/docs-next-preview:latest
           env:
             - name: TYPESENSE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: api-keys
-                  key: search-api-key
+              value: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
             - name: TYPESENSE_HOST
               value: docs-search.hypelens.de
             - name: TYPESENSE_PORT

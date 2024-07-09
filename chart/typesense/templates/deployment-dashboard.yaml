@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "typesense.fullname" . }}-dashboard
+  labels:
+    app: typesense-dashboard
+  {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dashboard.replicas }}
+  selector:
+    matchLabels:
+      app: typesense-dashboard
+    {{- include "typesense.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: typesense-dashboard
+      {{- include "typesense.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.dashboard.typesenseDashboard.image.repository }}:{{ .Values.dashboard.typesenseDashboard.image.tag
+          | default .Chart.AppVersion }}
+        name: typesense-dashboard
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "typesense.fullname" . }}-dashboard
+  labels:
+  {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.dashboard.type }}
+  selector:
+    app: typesense-dashboard
+  {{- include "typesense.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.dashboard.ports | toYaml | nindent 2 }}

@@ -20,10 +20,7 @@ spec:
       containers:
       - env:
         - name: TYPESENSE_API_KEY
-          valueFrom:
-            secretKeyRef:
-              key: search-api-key
-              name: api-keys
+          value: {{ quote .Values.docusaurus.docusaurus.env.typesenseSearchApiKey }}
         - name: TYPESENSE_HOST
           value: {{ quote .Values.docusaurus.docusaurus.env.typesenseHost }}
         - name: TYPESENSE_PORT

@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "typesense.fullname" . }}-typesense
+  labels:
+    app: typesense
+    service: typesense-headless
+  {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.typesense.replicas }}
+  selector:
+    matchLabels:
+      app: typesense
+      service: typesense-headless
+  serviceName: {{ include "typesense.fullname" . }}-headless
+  template:
+    metadata:
+      labels:
+        app: typesense
+        service: typesense-headless
+    spec:
+      containers:
+      - env:
+        - name: TYPESENSE_DATA_DIR
+          value: {{ quote .Values.typesense.typesense.env.typesenseDataDir }}
+        - name: TYPESENSE_API_PORT
+          value: {{ quote .Values.typesense.typesense.env.typesenseApiPort }}
+        - name: TYPESENSE_PEERING_PORT
+          value: {{ quote .Values.typesense.typesense.env.typesensePeeringPort }}
+        - name: TYPESENSE_NODES
+          value: {{ quote .Values.typesense.typesense.env.typesenseNodes }}
+        - name: TYPESENSE_ENABLE_CORS
+          value: {{ quote .Values.typesense.typesense.env.typesenseEnableCors }}
+        - name: TYPESENSE_CORS_DOMAINS
+          value: {{ quote .Values.typesense.typesense.env.typesenseCorsDomains }}
+        - name: TYPESENSE_RESET_PEERS_ON_ERROR
+          value: {{ quote .Values.typesense.typesense.env.typesenseResetPeersOnError
+            }}
+        - name: TYPESENSE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: typesense-api-key
+              name: {{ include "typesense.fullname" . }}-api-keys
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.typesense.typesense.image.repository }}:{{ .Values.typesense.typesense.image.tag
+          | default .Chart.AppVersion }}
+        name: typesense
+        ports:
+        - containerPort: 8108
+          name: http
+        resources: {{- toYaml .Values.typesense.typesense.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /usr/share/typesense
+          name: nodeslist
+        - mountPath: /usr/share/typesense/data
+          name: data
+      securityContext:
+        fsGroup: 2000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        runAsUser: 10000
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - configMap:
+          items:
+          - key: nodes
+            path: nodes
+          name: {{ include "typesense.fullname" . }}-nodeslist
+        name: nodeslist
+  updateStrategy: {}
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources: {{ .Values.typesense.volumeClaims.data | toYaml | nindent 8 }}
+      storageClassName: csi-disk

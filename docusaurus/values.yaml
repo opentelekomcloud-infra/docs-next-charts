@@ -1,8 +1,8 @@
 docusaurus:
   docusaurus:
     env:
-      typesenseHost: docs-search.hypelens.de
-      typesensePort: "8108"
+      typesenseHost: docs-search-preview.hypelens.de
+      typesensePort: "80"
       typesenseProtocol: http
       typesenseSearchApiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
     image:

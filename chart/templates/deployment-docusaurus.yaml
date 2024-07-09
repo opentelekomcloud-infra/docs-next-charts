@@ -50,3 +50,28 @@ spec:
   {{- include "chart.selectorLabels" . | nindent 4 }}
   ports:
 	{{- .Values.docusaurus.ports | toYaml | nindent 2 }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "chart.fullname" . }}-docusaurus
+  labels:
+  {{- include "chart.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/elb.class: union
+    kubernetes.io/elb.id: {{ .Values.docusaurus.ingress.elbId }}
+    kubernetes.io/elb.port: {{ quote .Values.docusaurus.ingress.port }}
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: cce
+  rules:
+  - host: {{ .Values.docusaurus.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "chart.fullname" . }}-docusaurus'
+            port:
+              number: {{ .Values.docusaurus.ingress.port }}
+        path: /
+        pathType: ImplementationSpecific

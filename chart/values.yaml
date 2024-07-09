@@ -1,0 +1,16 @@
+docusaurus:
+  docusaurus:
+    env:
+      typesenseHost: docs-search.hypelens.de
+      typesensePort: "8108"
+      typesenseProtocol: http
+    image:
+      repository: akyriako78/docs-next-preview
+      tag: latest
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  replicas: 3
+  type: NodePort
+kubernetesClusterDomain: cluster.local

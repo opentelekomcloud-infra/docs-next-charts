@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: docusaurus
-          image: akyriako78/docsnext:rc.0
+          image: akyriako78/docs-next-preview:latest
           env:
             - name: TYPESENSE_API_KEY
               valueFrom:
@@ -44,29 +44,3 @@ spec:
     targetPort: 80
   selector:
     app: docusaurus
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: docusaurus
-  namespace: docs-next
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/elb.class: union
-    kubernetes.io/elb.id: c7cd3a6b-1f0b-4268-923d-29858fa4b415
-    kubernetes.io/elb.port: '80'
-spec:
-  ingressClassName: cce
-  rules:
-  - host: docs-next.hypelens.de
-    http:
-      paths:
-      - path: /
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: docusaurus
-            port:
-              number: 80
-        property:
-              ingress.beta.kubernetes.io/url-match-mode: STARTS_WITH

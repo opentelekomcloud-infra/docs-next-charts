@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}-docusaurus
+  labels:
+    app: docusaurus
+  {{- include "chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.docusaurus.replicas }}
+  selector:
+    matchLabels:
+      app: docusaurus
+    {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: docusaurus
+      {{- include "chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: TYPESENSE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: search-api-key
+              name: api-keys
+        - name: TYPESENSE_HOST
+          value: {{ quote .Values.docusaurus.docusaurus.env.typesenseHost }}
+        - name: TYPESENSE_PORT
+          value: {{ quote .Values.docusaurus.docusaurus.env.typesensePort }}
+        - name: TYPESENSE_PROTOCOL
+          value: {{ quote .Values.docusaurus.docusaurus.env.typesenseProtocol }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.docusaurus.docusaurus.image.repository }}:{{ .Values.docusaurus.docusaurus.image.tag
+          | default .Chart.AppVersion }}
+        name: docusaurus
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chart.fullname" . }}-docusaurus
+  labels:
+  {{- include "chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.docusaurus.type }}
+  selector:
+    app: docusaurus
+  {{- include "chart.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.docusaurus.ports | toYaml | nindent 2 }}

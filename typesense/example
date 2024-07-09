@@ -1,1 +1,0 @@
-curl -H "X-TYPESENSE-API-KEY: Mycomplexpassword#6546" "typesense-headless:8108/collections/docusaurus-io-example/documents/search?q=*" | jq

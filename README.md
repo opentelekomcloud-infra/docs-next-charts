@@ -8,7 +8,7 @@ engineered for performance & ease-of-use.
 3. **typesense-scraper**: The scraper that crawls the documentation site and feeds typesense.
 4. **typesense-reverse-proxy**: The reverse-proxy component to securely publish typesense endpoints externally.
 
-The first one belongs to the chart **docs-next/docs-next** and 2,3 & 4 belong to the chart docs-next/typesense.
+The first one belongs to the chart **docs-next/docs-next** and 2,3 & 4 belong to the chart **docs-next/typesense**.
 
 ## Installation of the documentation site
 

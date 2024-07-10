@@ -1,4 +1,34 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "typesense.fullname" . }}-service-account
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "typesense.fullname" . }}-role
+  labels:
+    app.kubernetes.io/name: {{ include "typesense.fullname" . }}
+rules:
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "typesense.fullname" . }}-role-binding
+  labels:
+    app.kubernetes.io/name: {{ include "typesense.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "typesense.fullname" . }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "typesense.fullname" . }}-service-account
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "typesense.fullname" . }}-nodeslist
@@ -24,55 +54,65 @@ metadata:
   labels:
     app: typesense
 spec:
+  serviceName: {{ include "typesense.fullname" . }}-svc
   podManagementPolicy: Parallel
   replicas: 3
   selector:
     matchLabels:
       app: typesense
-  serviceName: {{ include "typesense.fullname" . }}-svc
   template:
     metadata:
       labels:
         app: typesense
     spec:
       containers:
-      - env:
-        - name: TYPESENSE_API_KEY
-          valueFrom:
-            secretKeyRef:
-              key: typesense-api-key
-              name: {{ include "typesense.fullname" . }}-api-keys
-        - name: TYPESENSE_NODES
-          value: "/usr/share/typesense/nodes"
-        - name: TYPESENSE_DATA_DIR
-          value: "/usr/share/typesense/data"
-        - name: TYPESENSE_API_PORT
-          value: "8108"
-        - name: TYPESENSE_PEERING_PORT
-          value: "8107"
-        - name: TYPESENSE_ENABLE_CORS
-          value: "true"
-        - name: TYPESENSE_CORS_DOMAINS
-          value: "http://{{ .Values.docusaurus.host }},https://{{ .Values.docusaurus.host }},https://{{ .Values.typesenseReverseProxy.host }},http://{{ .Values.typesenseReverseProxy.host }}"
-        - name: TYPESENSE_RESET_PEERS_ON_ERROR
-          value: "true"
-        image: typesense/typesense:26.0
-        name: typesense
-        ports:
-        - containerPort: 8108
-          name: http
-        resources:
-          limits:
-            cpu: 1024m
-            memory: 512Mi
-          requests:
-            cpu: 128m
-            memory: 112Mi
-        volumeMounts:
-        - mountPath: /usr/share/typesense
-          name: nodeslist
-        - mountPath: /usr/share/typesense/data
-          name: data
+        - name: typesense
+          image: typesense/typesense:26.0
+          env:
+          - name: TYPESENSE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                key: typesense-api-key
+                name: {{ include "typesense.fullname" . }}-api-keys
+          - name: TYPESENSE_NODES
+            value: "/usr/share/typesense/nodes"
+          - name: TYPESENSE_DATA_DIR
+            value: "/usr/share/typesense/data"
+          - name: TYPESENSE_API_PORT
+            value: "8108"
+          - name: TYPESENSE_PEERING_PORT
+            value: "8107"
+          - name: TYPESENSE_ENABLE_CORS
+            value: "true"
+          - name: TYPESENSE_CORS_DOMAINS
+            value: "http://{{ .Values.docusaurus.host }},https://{{ .Values.docusaurus.host }},https://{{ .Values.typesenseReverseProxy.host }},http://{{ .Values.typesenseReverseProxy.host }}"
+          - name: TYPESENSE_RESET_PEERS_ON_ERROR
+            value: "true"        
+          ports:
+          - containerPort: 8108
+            name: http
+          resources:
+            limits:
+              cpu: 1024m
+              memory: 512Mi
+            requests:
+              cpu: 128m
+              memory: 112Mi
+          volumeMounts:
+          - mountPath: /usr/share/typesense
+            name: nodeslist
+          - mountPath: /usr/share/typesense/data
+            name: data
+        - name: peer-resolver
+          image: akyriako78/typesense-peer-resolver:v0.1.0-dev.3
+          command:
+            - "/opt/tspr"
+            - "-namespace={{ .Release.Namespace }}"
+            - "-service={{ include "typesense.fullname" . }}-svc"
+          volumeMounts:
+          - name: nodeslist
+            mountPath: /usr/share/typesense
+      serviceAccountName: {{ include "typesense.fullname" . }}-service-account
       securityContext:
         fsGroup: 2000
         runAsGroup: 3000
@@ -80,12 +120,8 @@ spec:
         runAsUser: 10000
       terminationGracePeriodSeconds: 300
       volumes:
-      - configMap:
-          items:
-          - key: nodes
-            path: nodes
-          name: {{ include "typesense.fullname" . }}-nodeslist
-        name: nodeslist
+      - name: nodeslist
+        emptyDir: {}
   updateStrategy: {}
   volumeClaimTemplates:
   - metadata:
@@ -106,6 +142,7 @@ metadata:
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
   clusterIP: None
+  publishNotReadyAddresses: true
   selector:
     app: typesense
   ports:

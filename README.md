@@ -11,6 +11,8 @@ engineered for performance & ease-of-use.
 
 The first one belongs to the chart **docs-next/docs-next** and 2,3 & 4 belong to the chart **docs-next/typesense**.
 
+![alt text](assets/images/docs-next.png)
+
 ## Prerequisites
 
 You are going to need:

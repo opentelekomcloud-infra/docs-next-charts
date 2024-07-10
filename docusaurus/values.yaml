@@ -4,7 +4,7 @@ docusaurus:
       typesenseHost: docs-search-preview.hypelens.de
       typesensePort: "80"
       typesenseProtocol: http
-      typesenseSearchApiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
+      typesenseSearchApiKey: TXljb21wbGV4cGFzc3dvcmQjNjU0Ng==
     image:
       imageTag: 806b653
       repository: akyriako78/docs-next-preview

@@ -6,7 +6,7 @@ docusaurus:
       typesenseProtocol: http
       typesenseSearchApiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
     image:
-      imageTag: 4de4298
+      imageTag: 806b653
       repository: akyriako78/docs-next-preview
   ingress:
     elbId: 9c0981db-9b66-4916-a59d-186528f4d95d

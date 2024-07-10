@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - main
+      - chart_release_workflow
 
 jobs:
   release:
@@ -21,21 +21,21 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-    #   - name: Install Helm
-    #     uses: azure/setup-helm@v4
-    #     env:
-    #         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        env:
+            GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Run chart-releaser for docusaurus
         uses: helm/chart-releaser-action@v1.6.0
         with:
-            charts_dir: docusaurus/Chart.yaml
+            charts_dir: charts/docusaurus
         env:
             CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Run chart-releaser for typesense
         uses: helm/chart-releaser-action@v1.6.0
         with:
-            charts_dir: typesense/Chart.yaml
+            charts_dir: charts/typesense
         env:
             CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

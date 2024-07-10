@@ -18,12 +18,9 @@ spec:
       {{- include "typesense.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-      - env:
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
-        image: ghcr.io/bfritscher/typesense-dashboard:latest
-        name: typesense-dashboard
-        resources: {}
+        - name: typesense-dashboard
+          image: ghcr.io/bfritscher/typesense-dashboard:latest
+          resources: {}
 ---
 apiVersion: v1
 kind: Service

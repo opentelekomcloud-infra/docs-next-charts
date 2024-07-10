@@ -1,34 +1,45 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "docusaurus.fullname" . }}-api-keys
+  labels:
+  {{- include "docusaurus.labels" . | nindent 4 }}
+data:
+  typesense-api-key: {{ required "apiKeys.typesenseApiKey is required" .Values.docusaurus.docusaurus.env.typesenseSearchApiKey
+    | b64enc | quote }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chart.fullname" . }}-docusaurus
+  name: {{ include "docusaurus.fullname" . }}-docusaurus
   labels:
     app: docusaurus
-  {{- include "chart.labels" . | nindent 4 }}
+  {{- include "docusaurus.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.docusaurus.replicas }}
   selector:
     matchLabels:
       app: docusaurus
-    {{- include "chart.selectorLabels" . | nindent 6 }}
+    {{- include "docusaurus.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
         app: docusaurus
-      {{- include "chart.selectorLabels" . | nindent 8 }}
+      {{- include "docusaurus.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - env:
         - name: TYPESENSE_API_KEY
-          value: {{ quote .Values.docusaurus.docusaurus.env.typesenseSearchApiKey }}
+          valueFrom:
+            secretKeyRef:
+              key: typesense-api-key
+              name: {{ include "docusaurus.fullname" . }}-api-keys
         - name: TYPESENSE_HOST
           value: {{ quote .Values.docusaurus.docusaurus.env.typesenseHost }}
         - name: TYPESENSE_PORT
           value: {{ quote .Values.docusaurus.docusaurus.env.typesensePort }}
         - name: TYPESENSE_PROTOCOL
           value: {{ quote .Values.docusaurus.docusaurus.env.typesenseProtocol }}
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.docusaurus.docusaurus.image.repository }}:{{ .Values.docusaurus.docusaurus.image.imageTag
           | default .Chart.AppVersion }}
         name: docusaurus
@@ -37,23 +48,25 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "chart.fullname" . }}-docusaurus
+  name: {{ include "docusaurus.fullname" . }}-docusaurus
   labels:
-  {{- include "chart.labels" . | nindent 4 }}
+  {{- include "docusaurus.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.docusaurus.type }}
   selector:
     app: docusaurus
-  {{- include "chart.selectorLabels" . | nindent 4 }}
+  {{- include "docusaurus.selectorLabels" . | nindent 4 }}
+  type: NodePort
   ports:
-	{{- .Values.docusaurus.ports | toYaml | nindent 2 }}
+  - name: http
+    port: 80
+    targetPort: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "chart.fullname" . }}-docusaurus
+  name: {{ include "docusaurus.fullname" . }}-docusaurus
   labels:
-  {{- include "chart.labels" . | nindent 4 }}
+  {{- include "docusaurus.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/elb.class: union
     kubernetes.io/elb.id: {{ .Values.docusaurus.ingress.elbId }}
@@ -67,7 +80,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ include "chart.fullname" . }}-docusaurus'
+            name: '{{ include "docusaurus.fullname" . }}-docusaurus'
             port:
               number: {{ .Values.docusaurus.ingress.port }}
         path: /

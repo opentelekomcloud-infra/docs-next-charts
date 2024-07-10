@@ -56,8 +56,6 @@ spec:
           value: "http://{{ .Values.docusaurus.host }},https://{{ .Values.docusaurus.host }},https://{{ .Values.typesenseReverseProxy.host }},http://{{ .Values.typesenseReverseProxy.host }}"
         - name: TYPESENSE_RESET_PEERS_ON_ERROR
           value: "true"
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
         image: typesense/typesense:26.0
         name: typesense
         ports:

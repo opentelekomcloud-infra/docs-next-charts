@@ -38,8 +38,6 @@ spec:
               value: "8108"
             - name: TYPESENSE_PROTOCOL
               value: http
-            - name: KUBERNETES_CLUSTER_DOMAIN
-              value: {{ quote .Values.kubernetesClusterDomain }}
             image: typesense/docsearch-scraper:0.9.1
             name: typesense-scraper
             resources:

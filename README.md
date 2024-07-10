@@ -29,7 +29,7 @@ Additionally, you are going to need two(2) API keys:
 6. An **admin** API key for Typesense
 7. A **search-scoped** API key for docs-next (You are going to create this using either **curl** or the provisioned **typesense-dashboard**)
 
-> [!CRITICAL]
+> [!CAUTION]
 > Although you can use the **admin** key for both Typesense and documentation site it is highly discouraged to share 
 > admin keys in a public facing site.
 

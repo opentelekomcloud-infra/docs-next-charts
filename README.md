@@ -10,7 +10,7 @@ engineered for performance & ease-of-use.
 
 The first one belongs to the chart **docs-next/docs-next** and 2,3 & 4 belong to the chart docs-next/typesense.
 
-## Installation of documentation site
+## Installation of the documentation site
 
 ```shell
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
@@ -21,7 +21,7 @@ helm upgrade --install docs-next docs-next/docs-next \
     --create-namespace 
 ```
 
-## Installation of seach engine
+## Installation of the search engine
 
 ```shell
 helm repo add docs-next https://akyriako.github.io/docs-next-charts

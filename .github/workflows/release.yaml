@@ -26,16 +26,12 @@ jobs:
         env:
             GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Run chart-releaser for docusaurus
+      - name: Run chart-releaser 
         uses: helm/chart-releaser-action@v1.6.0
-        with:
-            charts_dir: charts/docusaurus
         env:
             CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Run chart-releaser for typesense
-        uses: helm/chart-releaser-action@v1.6.0
-        with:
-            charts_dir: charts/typesense
-        env:
-            CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    #   - name: Run chart-releaser for typesense
+    #     uses: helm/chart-releaser-action@v1.6.0
+    #     env:
+    #         CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

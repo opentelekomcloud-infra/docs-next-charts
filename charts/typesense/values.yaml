@@ -1,6 +1,5 @@
 apiKeys:
   typesenseApiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
-kubernetesClusterDomain: cluster.local
 typesenseDashboard:
   replicas: 1  
 typesenseReverseProxy:

@@ -26,13 +26,16 @@ jobs:
         env:
             GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Remove Releases
-        uses: dev-drprasad/delete-older-releases@v0.3.4
-        with:
-            keep_latest: 1
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # uses: sgpublic/delete-release-action@v1.1
+    # working 
+    #   - name: Remove Releases
+    #     uses: dev-drprasad/delete-older-releases@v0.3.4
+    #     with:
+    #         keep_latest: 1
+    #     env:
+    #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    # not working
+    # uses: sgpublic/delete-release-action@v1.1
         # with:
         #     release-drop: true
         #     release-keep-count: 1

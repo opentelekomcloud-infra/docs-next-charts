@@ -35,11 +35,11 @@ spec:
               key: typesense-api-key
               name: {{ include "docusaurus.fullname" . }}-api-keys
         - name: REACT_APP_TYPESENSE_HOST
-          value: {{ quote .Values.env.typesenseHost }}
+          value: {{ required "env.typesenseHost is required" .Values.env.typesenseHost | quote }}
         - name: REACT_APP_TYPESENSE_PORT
-          value: {{ quote .Values.env.typesensePort }}
+          value: {{ required "env.typesensePort is required" .Values.env.typesensePort | quote }}
         - name: REACT_APP_TYPESENSE_PROTOCOL
-          value: {{ quote .Values.env.typesenseProtocol }}
+          value: {{ required "env.typesenseProtocol is required" .Values.env.typesenseProtocol | quote }}
         image: {{ .Values.image }}:{{ .Values.tag
           | default .Chart.AppVersion }}
         name: docusaurus
@@ -69,19 +69,19 @@ metadata:
   {{- include "docusaurus.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/elb.class: union
-    kubernetes.io/elb.id: {{ .Values.ingress.elbId }}
-    kubernetes.io/elb.port: {{ quote .Values.ingress.port }}
+    kubernetes.io/elb.id: {{ required "ingress.elbId is required" .Values.ingress.elbId }}
+    kubernetes.io/elb.port: {{ required "ingress.port is required" .Values.ingress.port | quote}}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: cce
   rules:
-  - host: {{ .Values.ingress.host }}
+  - host: {{ required "ingress.host is required" .Values.ingress.host }}
     http:
       paths:
       - backend:
           service:
             name: '{{ include "docusaurus.fullname" . }}-docusaurus'
             port:
-              number: {{ .Values.ingress.port }}
+              number: {{ required "ingress.port is required" .Values.ingress.port }}
         path: /
         pathType: ImplementationSpecific

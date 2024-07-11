@@ -30,13 +30,13 @@ jobs:
         uses: sgpublic/delete-release-action@v1.1
         with:
             release-drop: true
-            release-keep-count: -1
+            release-keep-count: 0
             release-drop-tag: true
             pre-release-drop: true
-            pre-release-keep-count: -1
+            pre-release-keep-count: 0
             pre-release-drop-tag: true
             draft-drop: true
-            draft-drop-count: -1
+            draft-drop-count: -0
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

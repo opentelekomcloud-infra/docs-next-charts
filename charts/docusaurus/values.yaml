@@ -8,6 +8,6 @@ env:
   typesenseProtocol: http
   typesenseSearchApiKey: TXljb21wbGV4cGFzc3dvcmQjNjU0Ng==
 ingress:
-    elbId: 9c0981db-9b66-4916-a59d-186528f4d95d
-    host: preview.hypelens.de
-    port: 80
+  elbId: 9c0981db-9b66-4916-a59d-186528f4d95d
+  host: preview.hypelens.de
+  port: 80

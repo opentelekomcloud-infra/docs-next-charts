@@ -1,6 +1,6 @@
 replicas: 5
 image: akyriako78/docs-next-preview
-tag: 0.1.47-5398388
+tag: 0.1.53-ea1a92f
 env:
   typesenseHost: docs-search-preview.hypelens.de
   typesensePort: "80"

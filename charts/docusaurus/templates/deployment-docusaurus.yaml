@@ -5,7 +5,7 @@ metadata:
   labels:
   {{- include "docusaurus.labels" . | nindent 4 }}
 data:
-  typesense-api-key: {{ required "apiKeys.typesenseApiKey is required" .Values.docusaurus.docusaurus.env.typesenseSearchApiKey
+  typesense-api-key: {{ required "apiKeys.typesenseApiKey is required" .Values.env.typesenseSearchApiKey
     | b64enc | quote }}
 ---
 apiVersion: apps/v1
@@ -16,7 +16,7 @@ metadata:
     app: docusaurus
   {{- include "docusaurus.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.docusaurus.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: docusaurus
@@ -35,12 +35,12 @@ spec:
               key: typesense-api-key
               name: {{ include "docusaurus.fullname" . }}-api-keys
         - name: TYPESENSE_HOST
-          value: {{ quote .Values.docusaurus.docusaurus.env.typesenseHost }}
+          value: {{ quote .Values.env.typesenseHost }}
         - name: TYPESENSE_PORT
-          value: {{ quote .Values.docusaurus.docusaurus.env.typesensePort }}
+          value: {{ quote .Values.env.typesensePort }}
         - name: TYPESENSE_PROTOCOL
-          value: {{ quote .Values.docusaurus.docusaurus.env.typesenseProtocol }}
-        image: {{ .Values.docusaurus.docusaurus.image.repository }}:{{ .Values.docusaurus.docusaurus.image.imageTag
+          value: {{ quote .Values.env.typesenseProtocol }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag
           | default .Chart.AppVersion }}
         name: docusaurus
         resources: {}
@@ -69,19 +69,19 @@ metadata:
   {{- include "docusaurus.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/elb.class: union
-    kubernetes.io/elb.id: {{ .Values.docusaurus.ingress.elbId }}
-    kubernetes.io/elb.port: {{ quote .Values.docusaurus.ingress.port }}
+    kubernetes.io/elb.id: {{ .Values.ingress.elbId }}
+    kubernetes.io/elb.port: {{ quote .Values.ingress.port }}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: cce
   rules:
-  - host: {{ .Values.docusaurus.ingress.host }}
+  - host: {{ .Values.ingress.host }}
     http:
       paths:
       - backend:
           service:
             name: '{{ include "docusaurus.fullname" . }}-docusaurus'
             port:
-              number: {{ .Values.docusaurus.ingress.port }}
+              number: {{ .Values.ingress.port }}
         path: /
         pathType: ImplementationSpecific

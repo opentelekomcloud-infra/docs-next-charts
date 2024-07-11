@@ -6,7 +6,7 @@ metadata:
     app: typesense-dashboard
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.typesenseDashboard.replicas }}
+  replicas: {{ .Values.dashboard.replicas }}
   selector:
     matchLabels:
       app: typesense-dashboard

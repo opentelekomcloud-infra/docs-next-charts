@@ -1,13 +1,14 @@
-apiKeys:
-  typesenseApiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
-typesenseDashboard:
-  replicas: 1  
-typesenseReverseProxy:
-  host: docs-search-preview.hypelens.de
-  port: 80
-  elbId: 6d5ba18b-c302-4a0d-9951-d678bbad7a54
-  replicas: 1
-typesenseScraper:
+typesense:
+  apiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
+scraper:
   schedule: '*/2 * * * *'
-docusaurus:
-  host: preview.hypelens.de
+reverseProxy:
+  replicas: 1
+  ingress:
+    elbId: 6d5ba18b-c302-4a0d-9951-d678bbad7a54
+    host: docs-search-preview.hypelens.de
+    port: 80
+dashboard:
+  replicas: 1
+docusaurus: 
+  externalUrl: preview.hypelens.de

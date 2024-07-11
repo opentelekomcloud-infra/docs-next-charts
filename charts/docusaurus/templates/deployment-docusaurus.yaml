@@ -29,18 +29,18 @@ spec:
     spec:
       containers:
       - env:
-        - name: TYPESENSE_API_KEY
+        - name: REACT_APP_TYPESENSE_API_KEY
           valueFrom:
             secretKeyRef:
               key: typesense-api-key
               name: {{ include "docusaurus.fullname" . }}-api-keys
-        - name: TYPESENSE_HOST
+        - name: REACT_APP_TYPESENSE_HOST
           value: {{ quote .Values.env.typesenseHost }}
-        - name: TYPESENSE_PORT
+        - name: REACT_APP_TYPESENSE_PORT
           value: {{ quote .Values.env.typesensePort }}
-        - name: TYPESENSE_PROTOCOL
+        - name: REACT_APP_TYPESENSE_PROTOCOL
           value: {{ quote .Values.env.typesenseProtocol }}
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag
+        image: {{ .Values.image }}:{{ .Values.tag
           | default .Chart.AppVersion }}
         name: docusaurus
         resources: {}

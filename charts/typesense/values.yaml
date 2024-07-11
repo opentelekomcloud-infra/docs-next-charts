@@ -1,14 +1,14 @@
 typesense:
-  apiKey: ajJRNTFVc0x1aDlndVl0YzR4MTQ3TXY1WDc0ZzRpU0k=
+  apiKey: 
 scraper:
   schedule: '*/2 * * * *'
 reverseProxy:
   replicas: 1
   ingress:
-    elbId: 6d5ba18b-c302-4a0d-9951-d678bbad7a54
-    host: docs-search-preview.hypelens.de
+    elbId: 
+    host: 
     port: 80
 dashboard:
   replicas: 1
 docusaurus: 
-  externalUrl: preview.hypelens.de
+  externalUrl: 

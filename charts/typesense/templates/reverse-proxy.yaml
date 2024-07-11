@@ -7,9 +7,9 @@ data:
     events {}
     http {
       server {
-        listen {{ .Values.reverseProxy.ingress.port }};
+        listen {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port }};
 
-        valid_referers server_names {{ .Values.docusaurus.externalUrl }};   
+        valid_referers server_names {{ required "reverseProxy.docusaurus.externalUrl is required" .Values.docusaurus.externalUrl }};   
         if ($invalid_referer) {  
           return 403;     
         }
@@ -75,19 +75,19 @@ metadata:
   {{- include "typesense.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/elb.class: union
-    kubernetes.io/elb.id: {{ .Values.reverseProxy.ingress.elbId }}
-    kubernetes.io/elb.port: {{ quote .Values.reverseProxy.ingress.port }}
+    kubernetes.io/elb.id: {{ required "reverseProxy.ingress.elbId is required" .Values.reverseProxy.ingress.elbId }}
+    kubernetes.io/elb.port: {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port | quote }}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: cce
   rules:
-  - host: {{ .Values.reverseProxy.ingress.host }}
+  - host: {{ required "reverseProxy.ingress.host is required" .Values.reverseProxy.ingress.host }}
     http:
       paths:
       - backend:
           service:
             name: {{ include "typesense.fullname" . }}-reverse-proxy
             port:
-              number: {{ .Values.reverseProxy.ingress.port }}
+              number: {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port }}
         path: /
         pathType: ImplementationSpecific

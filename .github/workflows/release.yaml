@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - refine_workflow
+      - refile_workflow
 
 jobs:
   release:
@@ -26,19 +26,19 @@ jobs:
         env:
             GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    #   - name: Remove Releases
-    #     uses: sgpublic/delete-release-action@v1.1
-    #     with:
-    #         release-drop: true
-    #         release-keep-count: -1
-    #         release-drop-tag: true
-    #         pre-release-drop: true
-    #         pre-release-keep-count: -1
-    #         pre-release-drop-tag: true
-    #         draft-drop: true
-    #         draft-drop-count: -1
-    #     env:
-    #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove Releases
+        uses: sgpublic/delete-release-action@v1.1
+        with:
+            release-drop: true
+            release-keep-count: -1
+            release-drop-tag: true
+            pre-release-drop: true
+            pre-release-keep-count: -1
+            pre-release-drop-tag: true
+            draft-drop: true
+            draft-drop-count: -1
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run chart-releaser 
         uses: helm/chart-releaser-action@v1.6.0

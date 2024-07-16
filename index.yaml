@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   docs-next:
   - apiVersion: v2
+    appVersion: 0.1.65-c995b74
+    created: "2024-07-16T03:29:06.319973359Z"
+    description: Open Telekom Cloud Architecture Center (docs-next)
+    digest: e30b0e89f26d2f91c73080c1dea551e752ddc98ff7444f0021e377444bb4a6e6
+    name: docs-next
+    type: application
+    urls:
+    - https://github.com/akyriako/docs-next-charts/releases/download/docs-next-0.1.65/docs-next-0.1.65.tgz
+    version: 0.1.65
+  - apiVersion: v2
     appVersion: 0.1.64-11e358d
     created: "2024-07-15T14:32:44.040080955Z"
     description: Open Telekom Cloud Architecture Center (docs-next)
@@ -272,4 +282,4 @@ entries:
     urls:
     - https://github.com/akyriako/docs-next-charts/releases/download/typesense-0.1.0/typesense-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-15T14:32:44.040242619Z"
+generated: "2024-07-16T03:29:06.320113614Z"

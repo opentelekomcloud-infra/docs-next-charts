@@ -505,6 +505,16 @@ entries:
   umami:
   - apiVersion: v2
     appVersion: 2.13.2
+    created: "2024-09-06T18:41:49.926968251Z"
+    description: Open Telekom Cloud Architecture Center (umami)
+    digest: e2c7b955c0f2db576516a90886c58c6fa20017c2c3da525dbaeeb26866466296
+    name: umami
+    type: application
+    urls:
+    - https://github.com/akyriako/docs-next-charts/releases/download/umami-0.1.9/umami-0.1.9.tgz
+    version: 0.1.9
+  - apiVersion: v2
+    appVersion: 2.13.2
     created: "2024-09-06T18:33:56.84575336Z"
     description: Open Telekom Cloud Architecture Center (umami)
     digest: 85db124c895f86d654b4dee39e4713667bf429eaef54049d1edc7b6ecf388bd3
@@ -593,4 +603,4 @@ entries:
     urls:
     - https://github.com/akyriako/docs-next-charts/releases/download/umami-0.1.0/umami-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-06T18:33:56.845898389Z"
+generated: "2024-09-06T18:41:49.927145252Z"

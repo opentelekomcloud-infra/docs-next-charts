@@ -5,4 +5,4 @@ web:
     tag: postgresql-latest
   imagePullPolicy: Always
 postgresql:
-  storageClass: standard
+  storageClass: default

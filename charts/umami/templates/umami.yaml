@@ -1,0 +1,108 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: {{ include "umami.fullname" . }}-psql
+  labels:
+    application: umami
+  {{- include "umami.labels" . | nindent 4 }}
+spec:
+  databases:
+    umami: umami
+  numberOfInstances: 1
+  postgresql:
+    parameters:
+      huge_pages: "false"
+    version: "15"
+  preparedDatabases:
+    umami:
+      defaultUsers: true
+      schemas:
+        data: {}
+        history:
+          defaultRoles: true
+          defaultUsers: false
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 10m
+      memory: 100Mi
+  teamId: default
+  users:
+    admin:
+    - superuser
+    - createdb
+    umami: []
+  volume:
+    size: 1Gi
+    storageClass: {{ .Values.postgresql.storageClass }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "umami.fullname" . }}-web
+  labels:
+  {{- include "umami.labels" . | nindent 4 }}
+  annotations:
+    keel.sh/policy: force
+    keel.sh/pollSchedule: '@every 24h'
+    keel.sh/trigger: poll
+spec:
+  replicas: {{ .Values.web.replicas }}
+  selector:
+    matchLabels:
+      app: umami-web
+    {{- include "umami.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: umami-web
+      {{- include "umami.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: '5000'
+        - name: DB_DATABASE
+          value: "umami"
+        - name: DB_HOST
+          value: umami-psql.docs-next.svc.cluster.local
+        - name: DB_PORT
+          value: '5432'
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: umami.umami-psql.credentials.postgresql.acid.zalan.do
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: umami.umami-psql.credentials.postgresql.acid.zalan.do
+        - name: DATABASE_URL
+          value: "postgres://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_DATABASE)"
+        image: {{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default
+          .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.web.imagePullPolicy }}
+        name: web
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "umami.fullname" . }}-web
+  labels:
+  {{- include "umami.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      name: umami
+      port: 5000
+      targetPort: 5000
+  selector:
+    app: umami-web

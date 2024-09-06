@@ -9,5 +9,5 @@ postgresql:
 ingress:
   elbId: 
   host:
-  port: 80
-  clusterIssuer: opentelekomcloud-letsencrypt-staging
+  port: 443
+  clusterIssuer: opentelekomcloud-letsencrypt

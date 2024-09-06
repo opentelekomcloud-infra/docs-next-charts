@@ -67,7 +67,7 @@ spec:
         - name: DB_DATABASE
           value: "umami"
         - name: DB_HOST
-          value: umami-psql.docs-next.svc.cluster.local
+          value: umami-psql.{{ .Release.Namespace }}.svc.cluster.local
         - name: DB_PORT
           value: '5432'
         - name: DB_USERNAME
@@ -106,3 +106,4 @@ spec:
       targetPort: 5000
   selector:
     app: umami-web
+---

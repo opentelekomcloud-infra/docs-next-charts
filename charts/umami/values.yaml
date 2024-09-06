@@ -2,7 +2,7 @@ web:
   replicas: 2
   image:
     repository: ghcr.io/umami-software/umami
-    tag: postgresql-latest
-  imagePullPolicy: Always
+    tag: postgresql-v2.13.2
+  imagePullPolicy: IfNotPresent
 postgresql:
   storageClass: default

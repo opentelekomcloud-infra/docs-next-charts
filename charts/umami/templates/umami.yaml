@@ -3,7 +3,7 @@ kind: postgresql
 metadata:
   name: {{ include "umami.fullname" . }}-psql
   labels:
-    application: umami
+    application: {{ include "umami.fullname" . }}
   {{- include "umami.labels" . | nindent 4 }}
 spec:
   databases:
@@ -52,12 +52,12 @@ spec:
   replicas: {{ .Values.web.replicas }}
   selector:
     matchLabels:
-      app: umami-web
+      app: {{ include "umami.fullname" . }}-web
     {{- include "umami.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: umami-web
+        app: {{ include "umami.fullname" . }}-web
       {{- include "umami.selectorLabels" . | nindent 8 }}
     spec:
       containers:
@@ -105,7 +105,7 @@ spec:
       port: 5000
       targetPort: 5000
   selector:
-    app: umami-web
+    app: {{ include "umami.fullname" . }}-web
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -126,7 +126,7 @@ spec:
       paths:
       - backend:
           service:
-            name: {{ include "umami.fullname" . }}-ingress
+            name: {{ include "umami.fullname" . }}-web
             port:
               number: {{ required "ingress.port is required" .Values.ingress.port }}
         path: /

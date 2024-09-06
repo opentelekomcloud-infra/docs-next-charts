@@ -10,3 +10,4 @@ ingress:
   elbId: 
   host:
   port: 80
+  clusterIssuer: opentelekomcloud-letsencrypt-staging

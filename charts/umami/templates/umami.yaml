@@ -98,12 +98,36 @@ metadata:
   labels:
   {{- include "umami.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - protocol: TCP
-      name: umami
+      name: http
       port: 5000
       targetPort: 5000
   selector:
     app: umami-web
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "umami.fullname" . }}-ingress
+  labels:
+  {{- include "umami.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/elb.class: union
+    kubernetes.io/elb.id: {{ required "ingress.elbId is required" .Values.ingress.elbId }}
+    kubernetes.io/elb.port: {{ required "ingress.port is required" .Values.ingress.port | quote }}
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: cce
+  rules:
+  - host: {{ required "ingress.host is required" .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ include "typesense.fullname" . }}-reverse-proxy
+            port:
+              number: {{ required "ingress.port is required" .Values.ingress.port }}
+        path: /
+        pathType: ImplementationSpecific

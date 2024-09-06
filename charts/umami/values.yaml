@@ -6,3 +6,7 @@ web:
   imagePullPolicy: IfNotPresent
 postgresql:
   storageClass: default
+ingress:
+  elbId: 
+  host:
+  port: 80

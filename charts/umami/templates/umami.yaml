@@ -144,6 +144,6 @@ spec:
           service:
             name: {{ include "umami.fullname" . }}-web
             port:
-              number: {{ required "ingress.port is required" .Values.ingress.port }}
+              number: 80
         path: /
         pathType: ImplementationSpecific

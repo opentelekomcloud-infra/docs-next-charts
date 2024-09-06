@@ -110,14 +110,14 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ include "umami.fullname" . }}-web-certificate
+  name: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
 spec:
   dnsNames:
   - {{ required "ingress.host is required" .Values.ingress.host }}
   issuerRef:
     kind: ClusterIssuer
     name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
-  secretName: {{ include "umami.fullname" . }}-web-certificate-tls
+  secretName: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -135,7 +135,7 @@ spec:
   tls:
   - hosts:
       - {{ required "ingress.host is required" .Values.ingress.host }}
-    secretName: {{ include "umami.fullname" . }}-web-certificate-tls
+  secretName: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
   rules:
   - host: {{ required "ingress.host is required" .Values.ingress.host }}
     http:

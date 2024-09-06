@@ -135,7 +135,7 @@ spec:
   tls:
   - hosts:
       - {{ required "ingress.host is required" .Values.ingress.host }}
-  secretName: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+    secretName: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
   rules:
   - host: {{ required "ingress.host is required" .Values.ingress.host }}
     http:

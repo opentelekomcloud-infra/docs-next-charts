@@ -69,7 +69,7 @@ helm repo add cert-manager-webhook-opentelekomcloud https://akyriako.github.io/c
 helm repo update
 
 helm upgrade --install \
-    acme-dns-opentelekomcloud cert-manager-webhook-opentelekomcloud/cert-manager-webhook-opentelekomcloud \
+    acme-dns cert-manager-webhook-opentelekomcloud/cert-manager-webhook-opentelekomcloud \
   --set opentelekomcloud.accessKey=$OS_ACCESS_KEY \
   --set opentelekomcloud.secretKey=$OS_SECRET_KEY \
   --namespace cert-manager
@@ -156,7 +156,10 @@ Zalando Postgres Operator creates and manages PostgreSQL clusters running in Kub
 helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
 helm repo update
 
-helm install postgres-operator postgres-operator-charts/postgres-operator
+helm install \
+  postgres-operator postgres-operator-charts/postgres-operator \
+  --namespace zalando \
+  --create-namespace
 ```
 
 ## Prerequisites
@@ -230,10 +233,10 @@ helm repo update
 
 helm upgrade --install \
     typesense docs-next/typesense \
-    --set reverseProxy.elbid = $TYPESENSE_REVERSE_PROXY_ELB_ID \
-    --set reverseProxy.host = $TYPESENSE_REVERSE_PROXY_HOST \
-    --set typesense.apiKey = $TYPESENSE_ADMIN_API_KEY \
-    --set docusaurus.externalUrl = $DOCS_NEXT_HOST \
+    --set reverseProxy.ingress.elbId=$TYPESENSE_REVERSE_PROXY_ELB_ID \
+    --set reverseProxy.ingress.host=$TYPESENSE_REVERSE_PROXY_HOST \
+    --set typesense.apiKey=$TYPESENSE_ADMIN_API_KEY \
+    --set docusaurus.externalUrl=$DOCS_NEXT_HOST \
     --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \
     --create-namespace 
 ```
@@ -259,9 +262,9 @@ helm repo update
 
 helm upgrade --install \
     umami docs-next/umami \
-    --set ingress.elbid = $UMAMI_ELB_ID \
-    --set ingress.host = $UMAMI_HOST \
-    --set postgresql.storageClass = $POSTGRESQL_STORAGE_CLASS \
+    --set ingress.elbId=$UMAMI_ELB_ID \
+    --set ingress.host=$UMAMI_HOST \
+    --set postgresql.storageClass=$POSTGRESQL_STORAGE_CLASS \
     --namespace umami \
     --create-namespace 
 ```

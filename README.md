@@ -58,7 +58,9 @@ Additionally, you are going to need two(2) API keys:
 
 ## Deployment
 
-### Manual deployment of the documentation site
+### Quick bits
+
+#### Manual deployment of the documentation site
 
 ```shell
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
@@ -73,7 +75,7 @@ helm upgrade --install docs-next docs-next/docs-next \
     --create-namespace 
 ```
 
-### Manual deployment of the search engine
+#### Manual deployment of the search engine
 
 ```shell
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
@@ -88,7 +90,7 @@ helm upgrade --install docs-next docs-next/typesense \
     --create-namespace 
 ```
 
-### Automatic deployment with the CI/CD pipeline
+#### Automatic deployment with the CI/CD pipeline
 
 If you are relying on the automated pipeline that is been built-in as a GitHub Actions Workflow in the [docs-next](https://github.com/akyriako/docs-next)
 repository, you don't need to provide none of the above variables as values for the Helm charts. The GitHub Action of the other 
@@ -97,3 +99,6 @@ repository will automatically update the values in the Helm charts.
 > [!IMPORTANT]
 > This is the recommended way; use the manual deployment of the charts only for development and testing purposes!
 
+### Step by Step
+
+TBD

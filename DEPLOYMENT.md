@@ -138,4 +138,20 @@ spec:
 > [!IMPORTANT]
 > Replace placeholder `email` value, `user@company.com`, with the email that will be used for requesting certificates from Let's Encrypt.
 
+### zalando-postgres-operator
+
+Zalando Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes. The operator delivers an easy to run highly-available PostgreSQL clusters on Kubernetes powered by [Patroni](https://github.com/patroni/patroni). It is configured only through Postgres manifests (CRDs) to ease integration into automated CI/CD pipelines with no access to Kubernetes API directly, promoting infrastructure as code vs manual operations.
+
+> [!IMPORTANT]
+> The **zalando-postgres-operator** is optional, as long as you have another way to provision internally or externally PostgreSQL databases, which are required by **Umami**. 
+
+#### Install the Helm Chart
+
+```shell
+helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+helm repo update
+
+helm install postgres-operator postgres-operator-charts/postgres-operator
+```
+
 ## Prerequisites

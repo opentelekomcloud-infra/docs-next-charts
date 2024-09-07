@@ -77,7 +77,7 @@ helm upgrade --install \
 You are going to need one `ClusterIssuer` for the *production* and one for the *staging* Let's Encrypt endpoint. 
 
 > [!WARNING]
-> cert-manager has a known bug, that prevents custom webhooks to work with an `Issuer`. For that reason you need to install your issuer as `ClusterIssuer`.
+> **cert-manager** has a known bug, that prevents custom webhooks to work with an `Issuer`. For that reason you need to install your issuer as `ClusterIssuer`.
 
 - Staging:
 
@@ -144,7 +144,7 @@ spec:
 
 Zalando Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes. The operator delivers an easy to run highly-available PostgreSQL clusters on Kubernetes powered by [Patroni](https://github.com/patroni/patroni). It is configured only through Postgres manifests (CRDs) to ease integration into automated CI/CD pipelines with no access to Kubernetes API directly, promoting infrastructure as code vs manual operations.
 
-> [!IMPORTANT]
+> [!NOTE]
 > The **zalando-postgres-operator** is optional, as long as you have another way to provision internally or externally PostgreSQL databases, which are required by **Umami**. 
 
 #### Install the Helm Chart
@@ -205,14 +205,14 @@ kubectl create namespace docs-next-$DOCS_NEXT_ENVIRONMENT
 
 ## Typesense
 
-### Set the environment suffix:
+### Set the environment suffix
 
 ```shell
 export DOCS_NEXT_ENVIRONMENT=preview
 ```
 
 > [!TIP]
-> You can skip this step if you are deploying the Helm Chart from Argo CD, as it can automatically create the namespaces for you based on your configuration parameters.
+> You can skip this step if you are deploying the Helm Chart from Argo CD, as it can automatically create the namespaces for you, based on your configuration parameters.
 
 ### Install the Helm Chart
 
@@ -238,8 +238,8 @@ helm upgrade --install \
 > [!CAUTION]
 > `TYPESENSE_ADMIN_API_KEY` is the administrator's api key and it should never been distributed or made visible to the public during queries. For that reason we will create later a search-only scoped api key that will be used in Docusaurus installation.
 
-
 ### Create a Search-Only Scope API Key
+
 
 
 ## Umami

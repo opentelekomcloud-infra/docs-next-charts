@@ -1,6 +1,9 @@
 # Step-by-Step Deployment
 
-All the steps are mandatory and the order matters.
+> [!IMPORTANT]
+> - All steps are mandatory 
+> - The execution order matters. Follow the manual sequentially.
+> - The manual is tailored for installation on CCE Clusters, not suitable for other hypervisors or bare-metal Kubernetes Clusters.
 
 ## Dependencies
 
@@ -226,7 +229,7 @@ helm repo add docs-next https://akyriako.github.io/docs-next-charts
 helm repo update
 
 helm upgrade --install \
-    docs-next docs-next/typesense \
+    typesense docs-next/typesense \
     --set typesenseReverseProxy.elbid = $TYPESENSE_REVERSE_PROXY_ELB_ID \
     --set typesenseReverseProxy.host = $TYPESENSE_REVERSE_PROXY_HOST \
     --set apiKeys.typesenseApiKey = $TYPESENSE_ADMIN_API_KEY \
@@ -240,8 +243,28 @@ helm upgrade --install \
 
 ### Create a Search-Only Scope API Key
 
-
+//TODO
 
 ## Umami
+
+### Install the Helm Chart
+
+```shell
+export UMAMI_ELB_ID={value}
+export UMAMI_HOST={value}
+export POSTGRESQL_STORAGE_CLASS=csi-disk
+
+helm repo add docs-next https://akyriako.github.io/docs-next-charts
+helm repo update
+
+helm upgrade --install \
+    umami docs-next/umami \
+    --set ingress.elbid = $UMAMI_ELB_ID \
+    --set ingress.host = $UMAMI_HOST \
+    --set postgresql.storageClass = $POSTGRESQL_STORAGE_CLASS \
+    --namespace umami \
+    --create-namespace 
+```
+
 
 ## Docusaurus

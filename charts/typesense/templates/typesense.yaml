@@ -85,7 +85,7 @@ spec:
           - name: TYPESENSE_ENABLE_CORS
             value: "true"
           - name: TYPESENSE_CORS_DOMAINS
-            value: "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}"
+            value: "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}, http://localhost:9089"
           - name: TYPESENSE_RESET_PEERS_ON_ERROR
             value: "true"        
           ports:

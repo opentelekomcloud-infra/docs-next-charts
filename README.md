@@ -49,7 +49,7 @@ Additionally, you are going to need two(2) API keys:
 1. **cert-manager**: [cert-manager](https://cert-manager.io/) is an open source project that provides X.509 certificate management for Kubernetes and OpenShift workloads.
 2. **cert-manager-webhook-opentelekomcloud**: ACME DNS01 solver webhook for Open Telekom Cloud DNS, repo can be found [here](https://github.com/akyriako/cert-manager-webhook-opentelekomcloud).
 3. **zalando-postgres-operator**: A custom operator that creates and manages PostgreSQL clusters running in Kubernetes, repo can be found [here](https://github.com/zalando/postgres-operator).
-4. **argocd**: Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. 
+4. **argocd**: [Argo CD](https://argo-cd.readthedocs.io/en/stable/) is a declarative, GitOps continuous delivery tool for Kubernetes. 
    
 > [!NOTE]
 > - The **zalando-postgres-operator** is optional, as long as you have another way to provision internally or externally 

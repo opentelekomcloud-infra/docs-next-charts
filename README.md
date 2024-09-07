@@ -101,4 +101,4 @@ repository will automatically update the values in the Helm charts.
 
 ### Step by Step
 
-TBD
+You can find step-by-step deployment and configuration instructions [here](DEPLOYMENT.md).

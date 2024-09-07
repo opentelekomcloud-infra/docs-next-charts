@@ -8,7 +8,7 @@ First we need to install all the dependencies and third components that support 
 
 cert-manager is an open source project that provides X.509 certificate management for Kubernetes and OpenShift workloads. It supports TLS for Ingress, mTLS for pod-to-pod communication, and integrates with various Issuers and service mesh add-ons. 
 
-#### Install the helm chart
+#### Install the Helm Chart
 
 ```shell
 helm repo add jetstack https://charts.jetstack.io 
@@ -35,7 +35,7 @@ export OS_ACCESS_KEY={value}
 export OS_SECRET_KEY={value}
 ```
 
-#### Install the helm chart
+#### Install the Helm Chart
 
 ```shell
 helm repo add cert-manager-webhook-opentelekomcloud https://akyriako.github.io/cert-manager-webhook-opentelekomcloud/
@@ -46,3 +46,7 @@ helm upgrade --install acme-dns-opentelekomcloud cert-manager-webhook-openteleko
   --set opentelekomcloud.secretKey=$OS_SECRET_KEY \
   --namespace cert-manager
 ```
+
+#### Deploy ClusterIssuers
+
+

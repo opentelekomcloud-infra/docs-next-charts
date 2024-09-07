@@ -178,9 +178,9 @@ Pick up a domain name for each one of the 3 components e.g.:
 
 For every environment you can suffix the subdomain with the environment identifier e.g.:
 
-Production: arc.open-telekom-cloud.com
-Staging: arc-preview.open-telekom-cloud.com
-Development arc-dev.open-telekom-cloud.com
+- *Production*: arc.open-telekom-cloud.com
+- *Staging*: arc-preview.open-telekom-cloud.com
+- *Development*: arc-dev.open-telekom-cloud.com
 
 > [!TIP]
 > - You **don't need** an Umami instance per enviroment. A single instance suffice and you can then add your different Docusaurus environment for tracking as under Umami Websites.
@@ -193,9 +193,53 @@ Next:
 
 ![Create A Records](<assets/images/Screenshot from 2024-09-07 12-50-54.png>)
 
+### Kubernetes Namespace
+
+Create a Kubernetes namespace according to the environment you are deploying, e.g. for Staging:
+
+```shell
+export ARC_ENVIRONMENT=preview
+
+kubectl create namespace docs-next-$ARC_ENVIRONMENT
+```
+
 ## Typesense
+
+### Set the environment suffix:
+
+```shell
+export DOCS_NEXT_ENVIRONMENT=preview
+```
+
+> [!TIP]
+> You can skip this step if you are deploying the Helm Chart from Argo CD, as it can automatically create the namespaces for you based on your configuration parameters.
+
+### Install the Helm Chart
+
+```shell
+export DOCS_NEXT_ENVIRONMENT=preview
+
+export TYPESENSE_REVERSE_PROXY_ELB_ID={value}
+export TYPESENSE_REVERSE_PROXY_HOST={value}
+export TYPESENSE_API_KEY=$(echo | openssl dgst -binary -sha256 | openssl base64)
+export DOCS_NEXT_HOST={value}
+
+helm repo add docs-next https://akyriako.github.io/docs-next-charts
+helm repo update
+
+helm upgrade --install \
+    docs-next docs-next/typesense \
+    --set typesenseReverseProxy.elbid = $TYPESENSE_REVERSE_PROXY_ELB_ID \
+    --set typesenseReverseProxy.host = $TYPESENSE_REVERSE_PROXY_HOST \
+    --set apiKeys.typesenseApiKey = $TYPESENSE_API_KEY \
+    --set docusaurus.host = $DOCS_NEXT_HOST \
+    --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \
+    --create-namespace 
+```
+
+### Create a Search-Only Scope API Key
+
 
 ## Umami
 
 ## Docusaurus
-

@@ -1,6 +1,6 @@
 # Open Telekom Cloud Architecture Center Helm Charts
 
-Open Telekom Cloud Architecture Center (docs-next) consists of the following 5 components:
+Open Telekom Cloud Architecture Center (docs-next) consists of the components listed below:
 
 1. **docs-next**: The documentation site, based on [Docusaurus](https://docusaurus.io/).
 2. **typesense**: [Typesense](https://typesense.org/) is a modern, privacy-friendly, open-source search engine  
@@ -8,17 +8,24 @@ engineered for performance & ease-of-use.
 3. **typesense-scraper**: The scraper that crawls the documentation site and feeds typesense.
 4. **typesense-reverse-proxy**: The reverse-proxy component to securely publish typesense endpoints externally.
 5. **typesense-dashboard**: An [unofficial Typesense dashboard](https://github.com/bfritscher/typesense-dashboard) to manage and browse collections.
+6. **umami**: [Umami](https://umami.is/) is a fast, privacy-focused, and open-source alternative to Google Analytics.
 
-The first one belongs to the chart **docs-next/docs-next** and 2,3 & 4 belong to the chart **docs-next/typesense**.
+and packed in the following charts:
+
+- **docs-next**: docs-next [`chart/docs-next`]
+- **typesense**: typesense, typesense-scraper, typesense-reverse-proxy, typesense-dashboard [`charts/typesense`]
+- **umami**: umami [`chart/umami`]
 
 ![alt text](assets/images/docs-next.png)
 
 ## Prerequisites
 
+### Configuration
+
 You are going to need:
 
-1. Two(2) external-facing Elastic Load Balancers for the Ingress objects of **docs-next** and **typesense-reverse-proxy**. 
-2. Two(2) FQDN names for the external URLs of those exposed services.
+1. Two(3) external-facing Elastic Load Balancers for the Ingress objects of **docs-next** and **typesense-reverse-proxy** and **umami-web**. 
+2. Two(3) FQDN names for the external URLs of those exposed services.
 
 Next you need to:
 
@@ -34,6 +41,22 @@ Additionally, you are going to need two(2) API keys:
 > [!CAUTION]
 > Although you can use the **admin** key for both Typesense and documentation site it is highly discouraged to share 
 > admin keys in a public facing site.
+
+### Dependencies
+
+**Before** installing any of these charts you have to make sure you install in your cluster the following dependencies:
+
+1. **cert-manager**: [cert-manager](https://cert-manager.io/) is an open source project that provides X.509 certificate management for Kubernetes and OpenShift workloads.
+2. **cert-manager-webhook-opentelekomcloud**: ACME DNS01 solver webhook for Open Telekom Cloud DNS, repo can be found [here](https://github.com/akyriako/cert-manager-webhook-opentelekomcloud).
+3. **zalando-postgres-operator**: A custom operator that creates and manages PostgreSQL clusters running in Kubernetes, repo can be found [here](https://github.com/zalando/postgres-operator).
+   
+    > [!NOTE]
+    > The **zalando-postgres-operator** is optional, as long as you have another way to provision internally or externally PostgreSQL databases, which are required by **Umami**. 
+
+4. **argocd**: Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. 
+   
+    > [!NOTE]
+    > **argocd** is optional as well, if you have other means to automate the provisioning in place. Nevertheless it is strongly advised to use it 
 
 ## Deployment
 

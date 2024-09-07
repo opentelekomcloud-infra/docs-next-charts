@@ -50,6 +50,8 @@ That's an ACME DNS01 solver webhook for Open Telekom Cloud DNS, and requires **c
 
 Go to My Credentials -> Access Keys and either pick up an existing pair or create a new one:
 
+![Access Keys](<assets/images/Screenshot from 2024-09-07 11-33-33.png>)
+
 ```shell
 export OS_ACCESS_KEY={value}
 export OS_SECRET_KEY={value}
@@ -135,8 +137,5 @@ spec:
 
 > [!IMPORTANT]
 > Replace placeholder `email` value, `user@company.com`, with the email that will be used for requesting certificates from Let's Encrypt.
-
-
-
 
 ## Prerequisites

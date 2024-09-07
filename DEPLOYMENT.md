@@ -274,4 +274,14 @@ Open the address `https://$UMAMI_HOST` in a browser and use the default credenti
 > [!CAUTION]
 > Change the `admin` password immediatelly! 
 
+### Add a Website 
+
+- Go to Settings -> Add Website and a new website to track its traffic. As **Domain** enter the `DOCS_NEXT_HOST` value and as **Name** `docs-next-$DOCS_NEXT_ENVIRONMENT` value.
+
+![alt text](<assets/images/Screenshot from 2024-09-07 14-17-22.png>)
+
+- Copy the **Website ID** as we are going to need setting up Docusaurus later
+
+![alt text](<assets/images/Screenshot from 2024-09-07 14-18-29.png>)
+
 ## Docusaurus

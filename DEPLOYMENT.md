@@ -155,3 +155,17 @@ helm install postgres-operator postgres-operator-charts/postgres-operator
 ```
 
 ## Prerequisites
+
+After deploying the dependencies we need to provision and configure the following components in Open Telekom Cloud:
+
+### Load Balancers
+
+- Add 3 Shared Load Balancers in the same VPC and Subnet with your CCE Cluster. 
+- Let Open Telekom Cloud to assign them with an Elastic IP Address.
+- Note down their IDs and their EIPs
+
+![Elastic Load Balancers](<assets/images/Screenshot from 2024-09-07 11-49-47.png>)
+
+### DNS Records
+
+

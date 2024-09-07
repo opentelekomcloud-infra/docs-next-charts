@@ -81,10 +81,10 @@ helm upgrade --install docs-next docs-next/docs-next \
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
 helm repo update
 
-helm upgrade --install docs-next docs-next/typesense \
+helm upgrade --install typesense docs-next/typesense \
     --set typesenseReverseProxy.elbid = <typesense-reverse-proxy elastic load balancer id> \
     --set typesenseReverseProxy.host = <typesense-reverse-proxy fqdn> \
-    --set docusaurus.host = <docs-next fqdn> \
+    --set docusaurus.externalUrl = <docs-next fqdn> \
     --set apiKeys.typesenseApiKey = <admin-api-key> \
     -n docs-next-preview \
     --create-namespace 

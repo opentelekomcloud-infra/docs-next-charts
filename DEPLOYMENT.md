@@ -230,10 +230,10 @@ helm repo update
 
 helm upgrade --install \
     typesense docs-next/typesense \
-    --set typesenseReverseProxy.elbid = $TYPESENSE_REVERSE_PROXY_ELB_ID \
-    --set typesenseReverseProxy.host = $TYPESENSE_REVERSE_PROXY_HOST \
-    --set apiKeys.typesenseApiKey = $TYPESENSE_ADMIN_API_KEY \
-    --set docusaurus.host = $DOCS_NEXT_HOST \
+    --set reverseProxy.elbid = $TYPESENSE_REVERSE_PROXY_ELB_ID \
+    --set reverseProxy.host = $TYPESENSE_REVERSE_PROXY_HOST \
+    --set typesense.apiKey = $TYPESENSE_ADMIN_API_KEY \
+    --set docusaurus.externalUrl = $DOCS_NEXT_HOST \
     --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \
     --create-namespace 
 ```
@@ -285,3 +285,50 @@ Open the address `https://$UMAMI_HOST` in a browser and use the default credenti
 ![alt text](<assets/images/Screenshot from 2024-09-07 14-18-29.png>)
 
 ## Docusaurus
+
+### Set the environment suffix
+
+```shell
+export DOCS_NEXT_ENVIRONMENT=preview
+```
+
+### Install the Helm Chart
+
+```shell
+export DOCS_NEXT_ELB_ID={value}
+export DOCS_NEXT_HOST={value}
+export TYPESENSE_REVERSE_PROXY_HOST={value}
+export TYPESENSE_SEARCH_API_KEY={value}
+
+helm repo add docs-next https://akyriako.github.io/docs-next-charts
+helm repo update
+
+helm upgrade --install \
+    docs-next docs-next/docs-next \
+    --set ingress.elbid = $DOCS_NEXT_ELB_ID \
+    --set ingress.host = $DOCS_NEXT_HOST \
+    --set env.typesenseHost = $TYPESENSE_REVERSE_PROXY_HOST \
+    --set env.typesenseSearchApiKey = $TYPESENSE_SEARCH_API_KEY \
+    --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \
+    --create-namespace 
+```
+
+## Verification
+
+1. **All** endpoints should be publicly available using `HTTPS`.
+
+2. **Docusaurus** site is live.
+  
+![alt text](<assets/images/Screenshot from 2024-09-07 16-03-29.png>)
+
+3. **Docusaurus** site can communicate with Typesense reverse proxy without errors and returning search results
+
+![alt text](<assets/images/Screenshot from 2024-09-07 16-04-08.png>)
+
+4. **Typesense Scraper** CronJobs complete successfully in Kubernetes and create/amend the collection *docs-next*.  
+
+![alt text](<assets/images/Screenshot from 2024-09-07 16-04-33.png>)
+
+5. **Umami** is collecting analytics for Docusaurus.
+
+![alt text](<assets/images/Screenshot from 2024-09-07 16-05-02.png>)

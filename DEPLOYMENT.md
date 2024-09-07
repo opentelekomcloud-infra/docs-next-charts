@@ -1,5 +1,7 @@
 # Step-by-Step Deployment
 
+All the steps are mandatory and the order matters.
+
 ## Dependencies
 
 First we need to install all the dependencies and third components that support the functionality:
@@ -191,4 +193,9 @@ Next:
 
 ![Create A Records](<assets/images/Screenshot from 2024-09-07 12-50-54.png>)
 
+## Typesense
+
+## Umami
+
+## Docusaurus
 

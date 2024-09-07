@@ -265,6 +265,13 @@ helm upgrade --install \
     --namespace umami \
     --create-namespace 
 ```
+### Change the Default Admin Password
 
+Open the address `https://$UMAMI_HOST` in a browser and use the default credentials to login: `admin`, `umami`. 
+
+![Umami Login](<assets/images/Screenshot from 2024-09-07 14-08-47.png>)
+
+> [!CAUTION]
+> Change the `admin` password immediatelly! 
 
 ## Docusaurus

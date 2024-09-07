@@ -168,4 +168,27 @@ After deploying the dependencies we need to provision and configure the followin
 
 ### DNS Records
 
+Pick up a domain name for each one of the 3 components e.g.:
+
+- Docusaurus (docs-next): arc.open-telekom-cloud.com 
+- Typesense (typesense-reverse-proxy): arc-search.open-telekom-cloud.com
+- Umami (umami-web): arc-analytics.open-telekom-cloud.com
+
+For every environment you can suffix the subdomain with the environment identifier e.g.:
+
+Production: arc.open-telekom-cloud.com
+Staging: arc-preview.open-telekom-cloud.com
+Development arc-dev.open-telekom-cloud.com
+
+> [!TIP]
+> - You **don't need** an Umami instance per enviroment. A single instance suffice and you can then add your different Docusaurus environment for tracking as under Umami Websites.
+> - Umami can be installed on a separate management cluster, as long as it is exposed in a manner that would be reachable from all your environments.
+
+Next:
+
+- Go to Domain Name Service -> Public Zones and pick the public zone of your domain.
+- Bind the EIP address of a Load Balancer with a domain name by create an A-Record in the DNS zone.
+
+![Create A Records](<assets/images/Screenshot from 2024-09-07 12-50-54.png>)
+
 

@@ -76,7 +76,7 @@ helm upgrade --install \
 
 You are going to need one `ClusterIssuer` for the *production* and one for the *staging* Let's Encrypt endpoint. 
 
-> [!CAUTION]
+> [!WARNING]
 > cert-manager has a known bug, that prevents custom webhooks to work with an `Issuer`. For that reason you need to install your issuer as `ClusterIssuer`.
 
 - Staging:
@@ -235,7 +235,7 @@ helm upgrade --install \
     --create-namespace 
 ```
 
-> [!RISK]
+> [!CAUTION]
 > `TYPESENSE_ADMIN_API_KEY` is the administrator's api key and it should never been distributed or made visible to the public during queries. For that reason we will create later a search-only scoped api key that will be used in Docusaurus installation.
 
 

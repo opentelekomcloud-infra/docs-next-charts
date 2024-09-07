@@ -68,11 +68,73 @@ helm upgrade --install \
   --namespace cert-manager
 ```
 
-#### Deploy ClusterIssuers
+#### Deploy Cluster Issuers
 
+You are going to need one `ClusterIssuer` for the *production* and one for the *staging* Let's Encrypt endpoint. 
 
+> [!CAUTION]
+> cert-manager has a known bug, that prevents custom webhooks to work with an `Issuer`. For that reason you need to install your issuer as `ClusterIssuer`.
 
+- Staging:
 
+```yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: opentelekomcloud-letsencrypt-staging
+  namespace: cert-manager
+spec:
+  acme:
+    email: user@company.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: opentelekomcloud-letsencrypt-staging-tls-key
+    solvers:
+    - dns01:
+        webhook:
+          groupName: acme.opentelekomcloud.com
+          solverName: opentelekomcloud
+          config:
+            region: "eu-de"
+            accessKeySecretRef:
+              name: cert-manager-webhook-opentelekomcloud-creds
+              key: accessKey
+            secretKeySecretRef:
+              name: cert-manager-webhook-opentelekomcloud-creds
+              key: secretKey
+```
+
+- Production:
+
+```yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: opentelekomcloud-letsencrypt
+  namespace: cert-manager
+spec:
+  acme:
+    email: user@company.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: opentelekomcloud-letsencrypt-tls-key
+    solvers:
+    - dns01:
+        webhook:
+          groupName: acme.opentelekomcloud.com
+          solverName: opentelekomcloud
+          config:
+            region: "eu-de"
+            accessKeySecretRef:
+              name: cert-manager-webhook-opentelekomcloud-creds
+              key: accessKey
+            secretKeySecretRef:
+              name: cert-manager-webhook-opentelekomcloud-creds
+              key: secretKey
+```
+
+> [!IMPORTANT]
+> Replace placeholder `email` value, `user@company.com`, with the email that will be used for requesting certificates from Let's Encrypt.
 
 
 

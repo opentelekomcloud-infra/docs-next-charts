@@ -198,9 +198,9 @@ Next:
 Create a Kubernetes namespace according to the environment you are deploying, e.g. for Staging:
 
 ```shell
-export ARC_ENVIRONMENT=preview
+export DOCS_NEXT_ENVIRONMENT=preview
 
-kubectl create namespace docs-next-$ARC_ENVIRONMENT
+kubectl create namespace docs-next-$DOCS_NEXT_ENVIRONMENT
 ```
 
 ## Typesense
@@ -217,11 +217,9 @@ export DOCS_NEXT_ENVIRONMENT=preview
 ### Install the Helm Chart
 
 ```shell
-export DOCS_NEXT_ENVIRONMENT=preview
-
 export TYPESENSE_REVERSE_PROXY_ELB_ID={value}
 export TYPESENSE_REVERSE_PROXY_HOST={value}
-export TYPESENSE_API_KEY=$(echo | openssl dgst -binary -sha256 | openssl base64)
+export TYPESENSE_ADMIN_API_KEY=$(echo | openssl dgst -binary -sha256 | openssl base64)
 export DOCS_NEXT_HOST={value}
 
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
@@ -231,11 +229,15 @@ helm upgrade --install \
     docs-next docs-next/typesense \
     --set typesenseReverseProxy.elbid = $TYPESENSE_REVERSE_PROXY_ELB_ID \
     --set typesenseReverseProxy.host = $TYPESENSE_REVERSE_PROXY_HOST \
-    --set apiKeys.typesenseApiKey = $TYPESENSE_API_KEY \
+    --set apiKeys.typesenseApiKey = $TYPESENSE_ADMIN_API_KEY \
     --set docusaurus.host = $DOCS_NEXT_HOST \
     --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \
     --create-namespace 
 ```
+
+> [!RISK]
+> `TYPESENSE_ADMIN_API_KEY` is the administrator's api key and it should never been distributed or made visible to the public during queries. For that reason we will create later a search-only scoped api key that will be used in Docusaurus installation.
+
 
 ### Create a Search-Only Scope API Key
 

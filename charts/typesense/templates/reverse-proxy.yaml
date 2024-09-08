@@ -8,7 +8,6 @@ data:
     http {
       server {
         listen 80;
-        #listen {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port }};
 
         # valid_referers server_names {{ required "reverseProxy.docusaurus.externalUrl is required" .Values.docusaurus.externalUrl }};   
         # if ($invalid_referer) {  

@@ -10,4 +10,5 @@ env:
 ingress:
   elbId: 
   host: 
-  port: 80
+  port: 443
+  clusterIssuer: opentelekomcloud-letsencrypt

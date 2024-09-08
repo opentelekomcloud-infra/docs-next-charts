@@ -60,6 +60,18 @@ spec:
     port: 80
     targetPort: 80
 ---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
+spec:
+  dnsNames:
+  - {{ required "ingress.host is required" .Values.ingress.host }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
+  secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -73,6 +85,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: cce
+  tls:
+  - hosts:
+      - {{ required "ingress.host is required" .Values.ingress.host }}
+    secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
   rules:
   - host: {{ required "ingress.host is required" .Values.ingress.host }}
     http:

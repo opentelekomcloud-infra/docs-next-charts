@@ -7,12 +7,13 @@ data:
     events {}
     http {
       server {
-        listen {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port }};
+        listen 80;
+        #listen {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port }};
 
-        valid_referers server_names {{ required "reverseProxy.docusaurus.externalUrl is required" .Values.docusaurus.externalUrl }};   
-        if ($invalid_referer) {  
-          return 403;     
-        }
+        # valid_referers server_names {{ required "reverseProxy.docusaurus.externalUrl is required" .Values.docusaurus.externalUrl }};   
+        # if ($invalid_referer) {  
+        #   return 403;     
+        # }
 
         location / {
           proxy_pass http://{{ include "typesense.fullname" . }}-svc:8108/;
@@ -67,6 +68,18 @@ spec:
       targetPort: 80
       name: http
 ---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "typesense.fullname" . }}-reverse-proxy-{{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}-certificate
+spec:
+  dnsNames:
+  - {{ required "reverseProxy.ingress.host is required" .Values.reverseProxy.ingress.host }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: {{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}
+  secretName: {{ include "typesense.fullname" . }}-reverse-proxy-{{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}-certificate-tls
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -77,17 +90,20 @@ metadata:
     kubernetes.io/elb.class: union
     kubernetes.io/elb.id: {{ required "reverseProxy.ingress.elbId is required" .Values.reverseProxy.ingress.elbId }}
     kubernetes.io/elb.port: {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port | quote }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: cce
+  tls:
+  - hosts:
+      - {{ required "reverseProxy.ingress.host is required" .Values.reverseProxy.ingress.host }}
+    secretName: {{ include "typesense.fullname" . }}-reverse-proxy-{{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}-certificate-tls
   rules:
   - host: {{ required "reverseProxy.ingress.host is required" .Values.reverseProxy.ingress.host }}
     http:
       paths:
-      - backend:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
           service:
             name: {{ include "typesense.fullname" . }}-reverse-proxy
             port:
-              number: {{ required "reverseProxy.ingress.port is required" .Values.reverseProxy.ingress.port }}
-        path: /
-        pathType: ImplementationSpecific
+              number: 80

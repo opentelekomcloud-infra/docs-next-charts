@@ -40,7 +40,7 @@ spec:
           value: {{ required "env.typesensePort is required" .Values.env.typesensePort | quote }}
         - name: REACT_APP_TYPESENSE_PROTOCOL
           value: {{ required "env.typesenseProtocol is required" .Values.env.typesenseProtocol | quote }}
-        image: {{ .Values.image }}:{{ .Values.tag | default .Chart.AppVersion }}-{{ required ".Values.environment is required" .Values.environment | quote }}
+        image: {{ .Values.image }}:{{ .Values.tag | default .Chart.AppVersion }}-{{ required ".Values.environment is required" .Values.environment }}
         name: docusaurus
         resources: {}
 ---

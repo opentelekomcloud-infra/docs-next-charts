@@ -310,6 +310,7 @@ helm upgrade --install \
     docs-next docs-next/docs-next \
     --set ingress.elbId=$DOCS_NEXT_ELB_ID \
     --set ingress.host=$DOCS_NEXT_HOST \
+    --set environment=$DOCS_NEXT_ENVIRONMENT
     --set env.typesenseHost=$TYPESENSE_REVERSE_PROXY_HOST \
     --set env.typesenseSearchApiKey=$TYPESENSE_SEARCH_API_KEY \
     --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \

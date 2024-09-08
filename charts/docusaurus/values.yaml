@@ -1,6 +1,6 @@
 replicas: 5
 image: akyriako78/docs-next-preview
-tag: 0.1.89-2c8f40c
+tag: 0.1.92-b335e05
 env:
   typesenseHost: 
   typesensePort: "80"

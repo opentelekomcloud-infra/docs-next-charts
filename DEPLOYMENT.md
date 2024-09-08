@@ -336,3 +336,11 @@ helm upgrade --install \
 5. **Umami** is collecting analytics for Docusaurus.
 
 ![alt text](<assets/images/Screenshot from 2024-09-07 16-05-02.png>)
+
+## Conclusion
+
+It is **strongly advised** to follow a GitOps approach and install all the components above via ArgoCD, 
+to achieve a higher degree of automation and coherence between the structuring elements of Architecture Center.
+
+![ArgoCD ](assets/images/SCR-20240908-fck.png)
+

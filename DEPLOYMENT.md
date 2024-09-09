@@ -9,7 +9,7 @@
 
 First we need to install all the dependencies and third components that support the functionality:
 
-### argocd
+### Argo CD
 
 [Argo CD](https://argo-cd.readthedocs.io/en/stable/) is a declarative, GitOps continuous delivery tool for Kubernetes. It automates the deployment and lifecycle management of applications from Git repositories to specified target environments.
 
@@ -207,6 +207,8 @@ kubectl create namespace docs-next-$DOCS_NEXT_ENVIRONMENT
 ```
 
 ## Typesense
+
+[Typesense](https://typesense.org/) is a modern, blazing-fast, developer-friendly, open source search engine. It uses cutting-edge algorithms and offers features like typo tolerance, ranking, merchandising, synonyms, geo search, vector search and more.
 
 ### Set the environment suffix
 

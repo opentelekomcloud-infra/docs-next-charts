@@ -332,6 +332,11 @@ Do exactly the same for secrets:
 
 ![GitHub Environment Secrets](<assets/images/Screenshot from 2024-09-09 07-04-53.png>)
 
+> [!TIP]
+> **Why do we do that?** Because Docusaurus's Analytics and Search Plugin work only in the considered *production* mode (aka npm build). Consequently we cannot pass all these parameters as container environment variables that will be picked up by our Kubernetes Pods in runtime (if we run the pure React version, which is considered *development* mode) but instead we bake them in during the image build process.
+>
+> In summary, whenever a parameter, for any reason, has a value change, **always** make sure to update your respective GitHub Environment Variable or Secret.
+
 ### Set the environment suffix
 
 ```shell

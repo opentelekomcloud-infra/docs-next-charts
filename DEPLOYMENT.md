@@ -320,7 +320,17 @@ If there is no GitHub Environment in place, set up a new one. At the time being 
 > - `tag`: `0.1-{gh-action-id}-{gh-commit-hash}`
 > - `environment`: `{gh-environment-name}`
 >
-> By introducing the environment as an additional part of the image tag, allows us to build identical static builds of the same commit and then dictate our GitOps tool (in this case Argo CD) to deploy the right version to right target environment. 
+> By introducing the environment as an additional part of the image tag, allows us to build identical static builds of the same commit per environment, and then dictate our GitOps tool (in this case Argo CD) to deploy the right version to right target environment. E.g.:
+>
+> 0.1.96-ea5dda2-preview vs 0.1.96-ea5dda2-stable
+
+Copy the values of the environment variables to their corresponding GitHub variables:
+
+![GitHub Environment Variables](<assets/images/Screenshot from 2024-09-09 07-00-42.png>)
+
+Do exactly the same for secrets:
+
+![GitHub Environment Secrets](<assets/images/Screenshot from 2024-09-09 07-04-53.png>)
 
 ### Set the environment suffix
 

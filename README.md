@@ -52,9 +52,7 @@ Additionally, you are going to need two(2) API keys:
 4. **argocd**: [Argo CD](https://argo-cd.readthedocs.io/en/stable/) is a declarative, GitOps continuous delivery tool for Kubernetes. 
    
 > [!NOTE]
-> - The **zalando-postgres-operator** is optional, as long as you have another way to provision internally or externally 
-> PostgreSQL databases, which are required by **Umami**. 
-> - **argocd** is optional as well, if you have other means to automate the provisioning in place. Nevertheless it is strongly advised to use it 
+> **argocd** is optional, if you have other means to automate the provisioning in place. Nevertheless it is strongly advised to use it 
 
 ## Deployment
 

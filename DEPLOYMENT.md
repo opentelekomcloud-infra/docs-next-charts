@@ -147,9 +147,6 @@ spec:
 
 Zalando Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes. The operator delivers an easy to run highly-available PostgreSQL clusters on Kubernetes powered by [Patroni](https://github.com/patroni/patroni). It is configured only through Postgres manifests (CRDs) to ease integration into automated CI/CD pipelines with no access to Kubernetes API directly, promoting infrastructure as code vs manual operations.
 
-> [!NOTE]
-> The **zalando-postgres-operator** is optional, as long as you have another way to provision internally or externally PostgreSQL databases, which are required by **Umami**. 
-
 #### Install the Helm Chart
 
 ```shell
@@ -246,12 +243,12 @@ helm upgrade --install \
 
 ### Create a Search-Only Scope API Key
 
-Forward container port `80` to local port `9089`. It is very important to stick to these port combination because only the following endpoints are declared as the allowed CORS domains that Typesense will accept calls from:
+1. Forward container port `80` to local port `9089`. It is very important to stick to these port combination because only the following endpoints are declared as the allowed CORS domains that Typesense will accept calls from:
 
 - **Docusaurus**: `http(s)://$DOCS_NEXT_HOST` 
 - **Typesense Dashboard**: `http://localhost:9089` 
 
-Sign in the dashboard using the following parameters:
+2. Sign in the dashboard using the following parameters:
 
 ![Typesense Dashboard Login](<assets/images/Screenshot from 2024-09-09 06-22-35.png>)
 
@@ -262,9 +259,11 @@ Sign in the dashboard using the following parameters:
 
 ![Typesense Dashboard](<assets/images/Screenshot from 2024-09-07 17-18-57.png>)
 
-Go to *API Keys* -> *Search Key Example* and create a new API key for the collection `docs-next`:
+3. Go to *API Keys* -> *Search Key Example* and create a new API key for the collection `docs-next`:
 
 ![Typesense Dashboard Create Search Key](<assets/images/Screenshot from 2024-09-09 06-31-24.png>)
+
+4. Copy the value of the key to the variable `TYPESENSE_SEARCH_API_KEY`.
 
 ## Umami
 
@@ -306,6 +305,22 @@ Open the address `https://$UMAMI_HOST` in a browser and use the default credenti
 ![alt text](<assets/images/Screenshot from 2024-09-07 14-18-29.png>)
 
 ## Docusaurus
+
+### Set GitHub Enviroment Variables & Secrets
+
+If there is no GitHub Environment in place, set up a new one. At the time being two environments are configured: `preview` as staging, and `stable` as production. 
+
+> [!IMPORTANT]
+> The GitHub Environment names are the only acceptable values for `DOCS_NEXT_ENVIRONMENT`. A GitHub Release Workflow in **docs-next** repository will build after each successful commit a brand new container image of a static build of the Docusaurus, and will tag it using the following naming convention:
+>
+> `{organization-image-registry}/docs-next:0.1-{gh-action-id}-{gh-commit-hash}-{gh-environment-name}`
+>
+> The same GitHub actions later updates the following parameters in docs-next/docs-next Helm Chart:
+> - `image`: `{organization-image-registry}/docs-next`
+> - `tag`: `0.1-{gh-action-id}-{gh-commit-hash}`
+> - `environment`: `{gh-environment-name}`
+>
+> By introducing the environment as an additional part of the image tag, allows us to build identical static builds of the same commit and then dictate our GitOps tool (in this case Argo CD) to deploy the right version to right target environment. 
 
 ### Set the environment suffix
 

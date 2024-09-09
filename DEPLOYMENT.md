@@ -11,7 +11,7 @@ First we need to install all the dependencies and third components that support 
 
 ### argocd
 
-Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. It automates the deployment and lifecycle management of applications from Git repositories to specified target environments.
+[Argo CD](https://argo-cd.readthedocs.io/en/stable/) is a declarative, GitOps continuous delivery tool for Kubernetes. It automates the deployment and lifecycle management of applications from Git repositories to specified target environments.
 
 #### Install the Helm Chart
 
@@ -31,7 +31,7 @@ helm install \
 
 ### cert-manager
 
-cert-manager is an open source project that provides X.509 certificate management for Kubernetes and OpenShift workloads. It supports TLS for Ingress, mTLS for pod-to-pod communication, and integrates with various Issuers and service mesh add-ons. 
+[cert-manager](https://cert-manager.io/) is an open source project that provides X.509 certificate management for Kubernetes and OpenShift workloads. It supports TLS for Ingress, mTLS for pod-to-pod communication, and integrates with various Issuers and service mesh add-ons. 
 
 #### Install the Helm Chart
 
@@ -49,7 +49,7 @@ helm install \
 
 ### cert-manager-webhook-opentelekomcloud
 
-That's an ACME DNS01 solver webhook for Open Telekom Cloud DNS, and requires **cert-manager** to be installed first.
+[cert-manager-webhook-opentelekomcloud](https://github.com/akyriako/cert-manager-webhook-opentelekomcloud) is an ACME DNS01 solver webhook for Open Telekom Cloud DNS, and requires **cert-manager** to be installed first.
 
 #### Get Access/Secret Keys
 
@@ -145,7 +145,7 @@ spec:
 
 ### zalando-postgres-operator
 
-Zalando Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes. The operator delivers an easy to run highly-available PostgreSQL clusters on Kubernetes powered by [Patroni](https://github.com/patroni/patroni). It is configured only through Postgres manifests (CRDs) to ease integration into automated CI/CD pipelines with no access to Kubernetes API directly, promoting infrastructure as code vs manual operations.
+[zalando-postgres-operator](https://github.com/zalando/postgres-operator) creates and manages PostgreSQL clusters running in Kubernetes. The operator delivers an easy to run highly-available PostgreSQL clusters on Kubernetes powered by [Patroni](https://github.com/patroni/patroni). It is configured only through Postgres manifests (CRDs) to ease integration into automated CI/CD pipelines with no access to Kubernetes API directly, promoting infrastructure as code vs manual operations.
 
 #### Install the Helm Chart
 
@@ -267,6 +267,8 @@ helm upgrade --install \
 
 ## Umami
 
+[Umami](https://umami.is/) is a fast, privacy-focused, cookieless, fully GDPR-compliant and open-source alternative to Google Analytics.
+
 ### Install the Helm Chart
 
 ```shell
@@ -305,6 +307,8 @@ Open the address `https://$UMAMI_HOST` in a browser and use the default credenti
 ![alt text](<assets/images/Screenshot from 2024-09-07 14-18-29.png>)
 
 ## Docusaurus
+
+[Docusaurus](https://docusaurus.io/) is a static site generator for content-focused projects. It lets you write docs and blog posts with MDX, embed React components, support translations, versioning, search, and more.
 
 ### Set GitHub Enviroment Variables & Secrets
 

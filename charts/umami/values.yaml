@@ -5,7 +5,7 @@ web:
     tag: postgresql-v2.13.2
   imagePullPolicy: IfNotPresent
 postgresql:
-  storageClass: default
+  storageClass: csi-disk
 ingress:
   elbId: 
   host:

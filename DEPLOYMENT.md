@@ -246,7 +246,25 @@ helm upgrade --install \
 
 ### Create a Search-Only Scope API Key
 
-//TODO
+Forward container port `80` to local port `9089`. It is very important to stick to these port combination because only the following endpoints are declared as the allowed CORS domains that Typesense will accept calls from:
+
+- **Docusaurus**: `http(s)://$DOCS_NEXT_HOST` 
+- **Typesense Dashboard**: `http://localhost:9089` 
+
+Sign in the dashboard using the following parameters:
+
+![Typesense Dashboard Login](<assets/images/Screenshot from 2024-09-09 06-22-35.png>)
+
+- **Api Key**: value of `TYPESENSE_ADMIN_API_KEY`
+- **Protocol**: `https`
+- **Host**: value of `TYPESENSE_REVERSE_PROXY_HOST`
+- **Port**: `443`
+
+![Typesense Dashboard](<assets/images/Screenshot from 2024-09-07 17-18-57.png>)
+
+Go to *API Keys* -> *Search Key Example* and create a new API key for the collection `docs-next`:
+
+![Typesense Dashboard Create Search Key](<assets/images/Screenshot from 2024-09-09 06-31-24.png>)
 
 ## Umami
 

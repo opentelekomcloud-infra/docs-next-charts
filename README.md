@@ -16,7 +16,7 @@ and packed in the following charts:
 - **typesense**: typesense, typesense-scraper, typesense-reverse-proxy, typesense-dashboard [`charts/typesense`]
 - **umami**: umami [`chart/umami`]
 
-![alt text](assets/images/docs-next.png)
+![Architecture Diagram](assets/images/docs-next-2.png)
 
 ## Prerequisites
 

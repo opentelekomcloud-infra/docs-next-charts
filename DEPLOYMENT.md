@@ -319,11 +319,11 @@ If there is no GitHub Environment in place, set up a new one. At the time being 
 > [!IMPORTANT]
 > The GitHub Environment names are the only acceptable values for `DOCS_NEXT_ENVIRONMENT`. A GitHub Release Workflow in **docs-next** repository will build after each successful commit a brand new container image of a static build of the Docusaurus, and will tag it using the following naming convention:
 >
-> `{organization-image-registry}/docs-next:0.1-{gh-action-id}-{gh-commit-hash}-{gh-environment-name}`
+> `{organization-image-registry}/docs-next:{APP_VERSION}-{gh-action-id}-{gh-commit-hash}-{gh-environment-name}`
 >
 > The same GitHub actions later updates the following parameters in docs-next/docs-next Helm Chart:
 > - `image`: `{organization-image-registry}/docs-next`
-> - `tag`: `0.1-{gh-action-id}-{gh-commit-hash}`
+> - `tag`: `{APP_VERSION}-{gh-action-id}-{gh-commit-hash}`
 > - `environment`: `{gh-environment-name}`
 >
 > By introducing the environment as an additional part of the image tag, allows us to build identical static builds of the same commit per environment, and then dictate our GitOps tool (in this case Argo CD) to deploy the right version to right target environment. E.g.:

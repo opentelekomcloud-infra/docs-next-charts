@@ -66,12 +66,14 @@ Additionally, you are going to need two(2) API keys:
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
 helm repo update
 
-helm upgrade --install docs-next docs-next/docs-next \
-    --set docusaurus.ingress.elbid = <docs-next elastic load balancer id> \
-    --set docusaurus.ingress.host = <docs-next fqdn> \
-    --set docusaurus.docusaurus.env.typesenseHost = <typesense-reverse-proxy fqdn> \
-    --set apiKeys.typesenseApiKey = <search-api-key> \
-    -n docs-next-preview \
+helm upgrade --install \
+    docs-next docs-next/docs-next \
+    --set ingress.elbId={value} \
+    --set ingress.host={value} \
+    --set environment={value} \
+    --set env.typesenseHost={value} \
+    --set env.typesenseSearchApiKey={value} \
+    --namespace docs-next \
     --create-namespace 
 ```
 
@@ -81,12 +83,13 @@ helm upgrade --install docs-next docs-next/docs-next \
 helm repo add docs-next https://akyriako.github.io/docs-next-charts
 helm repo update
 
-helm upgrade --install typesense docs-next/typesense \
-    --set typesenseReverseProxy.elbid = <typesense-reverse-proxy elastic load balancer id> \
-    --set typesenseReverseProxy.host = <typesense-reverse-proxy fqdn> \
-    --set docusaurus.externalUrl = <docs-next fqdn> \
-    --set apiKeys.typesenseApiKey = <admin-api-key> \
-    -n docs-next-preview \
+helm upgrade --install \
+    typesense docs-next/typesense \
+    --set reverseProxy.ingress.elbId={value} \
+    --set reverseProxy.ingress.host={value} \
+    --set typesense.apiKey={value} \
+    --set docusaurus.externalUrl={value} \
+    --namespace docs-next \
     --create-namespace 
 ```
 

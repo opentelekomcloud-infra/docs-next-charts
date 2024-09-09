@@ -270,12 +270,12 @@ helm upgrade --install \
 ```
 ### Change the Default Admin Password
 
-Open the address `https://$UMAMI_HOST` in a browser and use the default credentials to login: `admin`, `umami`. 
+Open the address `https://$UMAMI_HOST` in a browser and use the default credentials to login: `admin`, `umami`. Go to Profile and change the default password. 
 
 ![Umami Login](<assets/images/Screenshot from 2024-09-07 14-08-47.png>)
 
 > [!CAUTION]
-> Change the `admin` password immediatelly! 
+> Change the `admin` password **immediatelly**! 
 
 ### Add a Website 
 
@@ -310,7 +310,7 @@ helm upgrade --install \
     docs-next docs-next/docs-next \
     --set ingress.elbId=$DOCS_NEXT_ELB_ID \
     --set ingress.host=$DOCS_NEXT_HOST \
-    --set environment=$DOCS_NEXT_ENVIRONMENT
+    --set environment=$DOCS_NEXT_ENVIRONMENT \
     --set env.typesenseHost=$TYPESENSE_REVERSE_PROXY_HOST \
     --set env.typesenseSearchApiKey=$TYPESENSE_SEARCH_API_KEY \
     --namespace docs-next-$DOCS_NEXT_ENVIRONMENT \

@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   docs-next:
   - apiVersion: v2
+    appVersion: 0.1.99-bdf552b
+    created: "2024-09-10T14:56:33.275696398Z"
+    description: Open Telekom Cloud Architecture Center (docs-next)
+    digest: 679075cd801e09f502fb7a790feead9e5a8caeb84cfe7870062147e1f7c12204
+    name: docs-next
+    type: application
+    urls:
+    - https://github.com/akyriako/docs-next-charts/releases/download/docs-next-0.1.99/docs-next-0.1.99.tgz
+    version: 0.1.99
+  - apiVersion: v2
     appVersion: 0.1.98-1741f62
     created: "2024-09-10T14:22:06.193315325Z"
     description: Open Telekom Cloud Architecture Center (docs-next)
@@ -743,4 +753,4 @@ entries:
     urls:
     - https://github.com/akyriako/docs-next-charts/releases/download/umami-0.1.0/umami-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-10T14:22:06.193519766Z"
+generated: "2024-09-10T14:56:33.275968798Z"

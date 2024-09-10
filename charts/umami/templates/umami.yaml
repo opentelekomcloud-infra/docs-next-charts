@@ -44,10 +44,6 @@ metadata:
   name: {{ include "umami.fullname" . }}-web
   labels:
   {{- include "umami.labels" . | nindent 4 }}
-  annotations:
-    keel.sh/policy: force
-    keel.sh/pollSchedule: '@every 24h'
-    keel.sh/trigger: poll
 spec:
   replicas: {{ .Values.web.replicas }}
   selector:

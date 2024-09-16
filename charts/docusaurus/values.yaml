@@ -1,6 +1,6 @@
 replicas: 5
 image: akyriako78/docs-next
-tag: 0.1.107-5eb727e
+tag: 0.1.108-28e421b
 environment: preview
 env:
   typesenseHost: 

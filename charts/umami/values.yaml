@@ -7,7 +7,6 @@ web:
 postgresql:
   storageClass: csi-disk
 ingress:
-  elbId: 
   host:
   port: 443
   clusterIssuer: letsencrypt-prod

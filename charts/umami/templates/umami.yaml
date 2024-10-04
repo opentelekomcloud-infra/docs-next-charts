@@ -102,19 +102,19 @@ spec:
       targetPort: 5000
   selector:
     app: {{ include "umami.fullname" . }}-web
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
-spec:
-  dnsNames:
-  - {{ required "ingress.host is required" .Values.ingress.host }}
-  issuerRef:
-    kind: ClusterIssuer
-    name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
-  secretName: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
----
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
+# spec:
+#   dnsNames:
+#   - {{ required "ingress.host is required" .Values.ingress.host }}
+#   issuerRef:
+#     kind: ClusterIssuer
+#     name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
+#   secretName: {{ include "umami.fullname" . }}-web-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+# ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -122,12 +122,9 @@ metadata:
   labels:
   {{- include "umami.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/elb.class: union
-    kubernetes.io/elb.id: {{ required "ingress.elbId is required" .Values.ingress.elbId }}
-    kubernetes.io/elb.port: {{ required "ingress.port is required" .Values.ingress.port | quote }}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: cce
+  ingressClassName: nginx
   tls:
   - hosts:
       - {{ required "ingress.host is required" .Values.ingress.host }}

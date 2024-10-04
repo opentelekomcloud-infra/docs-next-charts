@@ -10,4 +10,4 @@ ingress:
   elbId: 
   host:
   port: 443
-  clusterIssuer: opentelekomcloud-letsencrypt
+  clusterIssuer: letsencrypt-prod

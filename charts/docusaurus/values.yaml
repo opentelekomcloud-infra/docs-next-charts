@@ -1,6 +1,6 @@
 replicas: 5
-image: akyriako78/docs-next
-tag: 0.1.124-cdd574a
+image: quay.io/opentelekomcloud/docs-next
+tag: 0.1.129-0580b52
 environment: preview
 env:
   typesenseHost: 

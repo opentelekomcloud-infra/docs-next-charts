@@ -5,10 +5,8 @@ scraper:
 reverseProxy:
   replicas: 1
   ingress:
-    elbId: 
     host: 
-    port: 443
-    clusterIssuer: opentelekomcloud-letsencrypt
+    clusterIssuer: letsencrypt-prod
 dashboard:
   replicas: 1
 docusaurus: 

@@ -1,14 +1,7 @@
 replicas: 5
 image: quay.io/opentelekomcloud/docs-next
 tag: 0.1.129-0580b52
-environment: preview
-env:
-  typesenseHost: 
-  typesensePort: "80"
-  typesenseProtocol: http
-  typesenseSearchApiKey: 
+environment: preview 
 ingress:
-  elbId: 
   host: 
-  port: 443
-  clusterIssuer: opentelekomcloud-letsencrypt
+  clusterIssuer: letsencrypt-prod

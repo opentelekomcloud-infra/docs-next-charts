@@ -28,20 +28,8 @@ spec:
       {{- include "docusaurus.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-      - env:
-        - name: REACT_APP_TYPESENSE_API_KEY
-          valueFrom:
-            secretKeyRef:
-              key: typesense-api-key
-              name: {{ include "docusaurus.fullname" . }}-api-keys
-        - name: REACT_APP_TYPESENSE_HOST
-          value: {{ required "env.typesenseHost is required" .Values.env.typesenseHost | quote }}
-        - name: REACT_APP_TYPESENSE_PORT
-          value: {{ required "env.typesensePort is required" .Values.env.typesensePort | quote }}
-        - name: REACT_APP_TYPESENSE_PROTOCOL
-          value: {{ required "env.typesenseProtocol is required" .Values.env.typesenseProtocol | quote }}
+      - name: docusaurus
         image: {{ .Values.image }}:{{ .Values.tag | default .Chart.AppVersion }}-{{ required ".Values.environment is required" .Values.environment }}
-        name: docusaurus
         resources: {}
 ---
 apiVersion: v1
@@ -60,18 +48,18 @@ spec:
     port: 80
     targetPort: 80
 ---
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
-spec:
-  dnsNames:
-  - {{ required "ingress.host is required" .Values.ingress.host }}
-  issuerRef:
-    kind: ClusterIssuer
-    name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
-  secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
----
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
+# spec:
+#   dnsNames:
+#   - {{ required "ingress.host is required" .Values.ingress.host }}
+#   issuerRef:
+#     kind: ClusterIssuer
+#     name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
+#   secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+# ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -79,12 +67,9 @@ metadata:
   labels:
   {{- include "docusaurus.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/elb.class: union
-    kubernetes.io/elb.id: {{ required "ingress.elbId is required" .Values.ingress.elbId }}
-    kubernetes.io/elb.port: {{ required "ingress.port is required" .Values.ingress.port | quote}}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: cce
+  ingressClassName: nginx
   tls:
   - hosts:
       - {{ required "ingress.host is required" .Values.ingress.host }}

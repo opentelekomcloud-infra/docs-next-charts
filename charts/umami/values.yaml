@@ -8,5 +8,4 @@ postgresql:
   storageClass: csi-disk
 ingress:
   host:
-  port: 443
   clusterIssuer: letsencrypt-prod

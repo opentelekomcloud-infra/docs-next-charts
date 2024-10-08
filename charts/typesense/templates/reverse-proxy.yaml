@@ -73,6 +73,8 @@ metadata:
   name: {{ include "typesense.fullname" . }}-reverse-proxy
   labels:
   {{- include "typesense.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}
 spec:
   ingressClassName: nginx
   tls:

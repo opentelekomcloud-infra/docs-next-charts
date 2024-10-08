@@ -42,24 +42,12 @@ spec:
   selector:
     app: docusaurus
   {{- include "docusaurus.selectorLabels" . | nindent 4 }}
-  type: NodePort
+  type: ClusterIP
   ports:
   - name: http
     port: 80
     targetPort: 80
 ---
-# apiVersion: cert-manager.io/v1
-# kind: Certificate
-# metadata:
-#   name: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate
-# spec:
-#   dnsNames:
-#   - {{ required "ingress.host is required" .Values.ingress.host }}
-#   issuerRef:
-#     kind: ClusterIssuer
-#     name: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
-#   secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
-# ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

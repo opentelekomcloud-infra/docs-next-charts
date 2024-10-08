@@ -58,7 +58,7 @@ metadata:
   labels:
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: typesense-reverse-proxy
   ports:
@@ -67,18 +67,6 @@ spec:
       targetPort: 80
       name: http
 ---
-# apiVersion: cert-manager.io/v1
-# kind: Certificate
-# metadata:
-#   name: {{ include "typesense.fullname" . }}-reverse-proxy-{{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}-certificate
-# spec:
-#   dnsNames:
-#   - {{ required "reverseProxy.ingress.host is required" .Values.reverseProxy.ingress.host }}
-#   issuerRef:
-#     kind: ClusterIssuer
-#     name: {{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}
-#   secretName: {{ include "typesense.fullname" . }}-reverse-proxy-{{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}-certificate-tls
-# ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

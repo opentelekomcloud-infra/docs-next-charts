@@ -1,13 +1,3 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "docusaurus.fullname" . }}-api-keys
-  labels:
-  {{- include "docusaurus.labels" . | nindent 4 }}
-data:
-  typesense-api-key: {{ required "apiKeys.typesenseApiKey is required" .Values.env.typesenseSearchApiKey
-    | b64enc | quote }}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:

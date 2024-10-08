@@ -94,7 +94,7 @@ metadata:
   labels:
   {{- include "umami.labels" . | nindent 4 }}
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       name: http
@@ -102,6 +102,7 @@ spec:
       targetPort: 5000
   selector:
     app: {{ include "umami.fullname" . }}-web
+---
 # ---
 # apiVersion: cert-manager.io/v1
 # kind: Certificate

@@ -1,6 +1,6 @@
 replicas: 5
 image: quay.io/opentelekomcloud/docs-next
-tag: 0.1.134-3257f81
+tag: 0.1.135-c21ad46
 environment: preview 
 ingress:
   host: 

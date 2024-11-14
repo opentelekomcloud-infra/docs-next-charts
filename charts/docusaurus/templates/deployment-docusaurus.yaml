@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: docusaurus
-        image: {{ .Values.image }}:{{ .Values.tag | default .Chart.AppVersion }}-{{ required ".Values.environment is required" .Values.environment }}
+        image: {{ .Values.image }}:{{ .Values.tag | default .Chart.AppVersion }}
         resources: {}
 ---
 apiVersion: v1

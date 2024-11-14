@@ -1,13 +1,13 @@
 typesense:
-  apiKey: 
+  apiKey:
 scraper:
   schedule: '*/2 * * * *'
 reverseProxy:
   replicas: 1
   ingress:
-    host: 
+    host:
     clusterIssuer: letsencrypt-prod
 dashboard:
   replicas: 1
-docusaurus: 
-  externalUrl: 
+docusaurus:
+  externalUrl:

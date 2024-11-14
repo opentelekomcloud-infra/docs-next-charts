@@ -97,7 +97,7 @@ spec:
               memory: 512Mi
             requests:
               cpu: 128m
-              memory: 112Mi
+              memory: 256Mi
           volumeMounts:
           - mountPath: /usr/share/typesense
             name: nodeslist

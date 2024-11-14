@@ -38,7 +38,7 @@ spec:
               value: "8108"
             - name: TYPESENSE_PROTOCOL
               value: http
-            image: typesense/docsearch-scraper:0.9.1
+            image: typesense/docsearch-scraper:0.11.0
             name: typesense-scraper
             resources:
                 limits:

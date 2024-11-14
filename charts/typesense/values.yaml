@@ -1,5 +1,8 @@
 typesense:
   apiKey:
+  storage:
+    className: csi-disk
+    size: 40Gi
 scraper:
   schedule: '*/2 * * * *'
 reverseProxy:

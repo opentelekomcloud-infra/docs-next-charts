@@ -143,6 +143,8 @@ spec:
       volumes:
       - name: nodeslist
         emptyDir: {}
+      - name: health
+        emptyDir: {}
   volumeClaimTemplates:
   - metadata:
       name: data

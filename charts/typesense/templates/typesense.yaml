@@ -38,6 +38,19 @@ data:
   typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey
     | b64enc | quote }}
 ---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "typesense.fullname" . }}-pdb
+  labels:
+    app: {{ include "typesense.fullname" . }}-sts
+    {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "typesense.fullname" . }}-sts
+  maxUnavailable: 1
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -59,22 +72,6 @@ spec:
         app: {{ include "typesense.fullname" . }}-sts
     spec:
       containers:
-        # - name: health-checker
-        #   image: busybox
-        #   command:
-        #     - sleep
-        #     - inf
-        #   readinessProbe:
-        #     exec:
-        #       command:
-        #         - wget
-        #         - -q
-        #         - "-O"
-        #         - "/usr/share/health/status"
-        #         - "http://localhost:8108/health"
-        #   volumeMounts:
-        #   - name: health
-        #     mountPath: /usr/share/health
         - name: peer-resolver
           image: quay.io/opentelekomcloud/typesense-peer-resolver:1.0.2
           command:
@@ -129,11 +126,9 @@ spec:
               cpu: 1024m
               memory: 512Mi
             requests:
-              cpu: 128m
+              cpu: 256m
               memory: 256Mi
           volumeMounts:
-          # - name: health
-          #   mountPath: /usr/share/health
           - name: nodeslist
             mountPath: /usr/share/typesense
           - name: data

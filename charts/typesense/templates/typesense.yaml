@@ -45,7 +45,7 @@ metadata:
   labels:
     {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "typesense.fullname" . }}-svc
+  serviceName: {{ include "typesense.fullname" . }}-resolver
   # podManagementPolicy: Parallel
   # updateStrategy: {}
   replicas: 3

@@ -114,10 +114,16 @@ spec:
             httpGet:
               path: /health
               port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 2
           readinessProbe:
             httpGet:
               path: /health
               port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 2
           resources:
             limits:
               cpu: 1024m

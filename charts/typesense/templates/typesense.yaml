@@ -33,7 +33,7 @@ kind: Secret
 metadata:
   name: {{ include "typesense.fullname" . }}-api-keys
   labels:
-  {{- include "typesense.labels" . | nindent 4 }}
+    {{- include "typesense.labels" . | nindent 4 }}
 data:
   typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey
     | b64enc | quote }}
@@ -51,11 +51,11 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      {{- include "typesense.selectorLabels" . | nindent 4 }}
+      {{- include "typesense.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "typesense.selectorLabels" . | nindent 4 }}
+        {{- include "typesense.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: typesense
@@ -159,12 +159,12 @@ kind: Service
 metadata:
   name: {{ include "typesense.fullname" . }}-resolver
   labels:
-  {{- include "typesense.labels" . | nindent 4 }}
+    {{- include "typesense.labels" . | nindent 4 }}
 spec:
   clusterIP: None
   publishNotReadyAddresses: true
   selector:
-     {{- include "typesense.selectorLabels" . | nindent 4 }}
+    {{- include "typesense.selectorLabels" . | nindent 4 }}
   ports:
   - name: http
     port: 8108
@@ -175,7 +175,7 @@ kind: Service
 metadata:
   name: {{ include "typesense.fullname" . }}-svc
   labels:
-  {{- include "typesense.labels" . | nindent 4 }}
+    {{- include "typesense.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   selector:

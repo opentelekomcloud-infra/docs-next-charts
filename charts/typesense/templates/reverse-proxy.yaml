@@ -26,12 +26,12 @@ kind: Deployment
 metadata:
   name: {{ include "typesense.fullname" . }}-reverse-proxy
   labels:
-    app: typesense-reverse-proxy
+    app: {{ include "typesense.fullname" . }}-reverse-proxy
 spec:
   replicas: {{ .Values.reverseProxy.replicas }}
   selector:
     matchLabels:
-      app: typesense-reverse-proxy
+      app: {{ include "typesense.fullname" . }}-reverse-proxy
   template:
     metadata:
       labels:
@@ -60,7 +60,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: typesense-reverse-proxy
+    app: {{ include "typesense.fullname" . }}-reverse-proxy
   ports:
     - protocol: TCP
       port: 80

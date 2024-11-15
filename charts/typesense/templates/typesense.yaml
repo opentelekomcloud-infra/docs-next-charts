@@ -43,6 +43,7 @@ kind: StatefulSet
 metadata:
   name: {{ include "typesense.fullname" . }}-ts
   labels:
+    app: {{ include "typesense.fullname" . }}-sts
     {{- include "typesense.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "typesense.fullname" . }}-sts-resolver
@@ -51,11 +52,11 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      {{- include "typesense.selectorLabels" . | nindent 6 }}
+      app: {{ include "typesense.fullname" . }}-sts
   template:
     metadata:
       labels:
-        {{- include "typesense.selectorLabels" . | nindent 8 }}
+        app: {{ include "typesense.fullname" . }}-sts
     spec:
       containers:
         - name: health-checker
@@ -113,12 +114,12 @@ spec:
             httpGet:
               path: /health
               port: http
-          readinessProbe:
-            exec:
-              command:
-                - grep
-                - "true"
-                - /usr/share/health/status
+          # readinessProbe:
+          #   exec:
+          #     command:
+          #       - grep
+          #       - "true"
+          #       - /usr/share/health/status
           resources:
             limits:
               cpu: 1024m
@@ -166,7 +167,7 @@ spec:
   clusterIP: None
   publishNotReadyAddresses: true
   selector:
-    {{- include "typesense.selectorLabels" . | nindent 4 }}
+    app: {{ include "typesense.fullname" . }}-sts
   ports:
   - name: http
     port: 8108
@@ -181,7 +182,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    {{- include "typesense.selectorLabels" . | nindent 4 }}
+    app: {{ include "typesense.fullname" . }}-sts
   ports:
   - name: http
     port: 8108

@@ -96,13 +96,13 @@ spec:
           - containerPort: 8108
             name: http
             protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            failureThreshold: 2
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: http
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 5
+          #   failureThreshold: 2
           readinessProbe:
             httpGet:
               path: /health

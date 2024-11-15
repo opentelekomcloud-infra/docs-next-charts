@@ -129,7 +129,7 @@ spec:
           volumeMounts:
           - name: health
             mountPath: /usr/share/health
-          - name: nodelist
+          - name: nodeslist
             mountPath: /usr/share/typesense
           - name: data
             mountPath: /usr/share/typesense/data

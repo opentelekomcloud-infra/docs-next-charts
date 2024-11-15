@@ -38,19 +38,6 @@ data:
   typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey
     | b64enc | quote }}
 ---
-# apiVersion: policy/v1
-# kind: PodDisruptionBudget
-# metadata:
-#   name: {{ include "typesense.fullname" . }}-pdb
-#   labels:
-#     app: {{ include "typesense.fullname" . }}-sts
-#     {{- include "typesense.labels" . | nindent 4 }}
-# spec:
-#   selector:
-#     matchLabels:
-#       app: {{ include "typesense.fullname" . }}-sts
-#   maxUnavailable: 1
-# ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

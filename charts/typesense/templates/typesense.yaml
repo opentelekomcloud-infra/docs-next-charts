@@ -60,7 +60,7 @@ metadata:
     {{- include "typesense.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "typesense.fullname" . }}-sts-resolver
-  # podManagementPolicy: Parallel
+  podManagementPolicy: Parallel
   # updateStrategy: {}
   replicas: 3
   selector:

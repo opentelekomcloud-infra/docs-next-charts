@@ -70,26 +70,28 @@ spec:
             mountPath: /usr/share/typesense
         - name: typesense
           image: typesense/typesense:27.1
+          command:
+            - "/opt/typesense-server"
+            - "--data-dir"
+            - "/usr/share/typesense/data"
+            - "--api-port"
+            - "8108"
+            - "--api-address"
+            - "0.0.0.0"
+            - "--peering-port"
+            - "8107"
+            - "--nodes"
+            - "/usr/share/typesense/nodes"
+            - "--enable-cors"
+            - "--cors-domains"
+            - "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}, http://localhost:9089"
+            - "--reset-peers-on-error"
           env:
           - name: TYPESENSE_API_KEY
             valueFrom:
               secretKeyRef:
                 key: typesense-api-key
                 name: {{ include "typesense.fullname" . }}-api-keys
-          - name: TYPESENSE_NODES
-            value: "/usr/share/typesense/nodes"
-          - name: TYPESENSE_DATA_DIR
-            value: "/usr/share/typesense/data"
-          - name: TYPESENSE_API_PORT
-            value: "8108"
-          - name: TYPESENSE_PEERING_PORT
-            value: "8107"
-          - name: TYPESENSE_ENABLE_CORS
-            value: "true"
-          - name: TYPESENSE_CORS_DOMAINS
-            value: "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}, http://localhost:9089"
-          - name: TYPESENSE_RESET_PEERS_ON_ERROR
-            value: "true"        
           ports:
           - containerPort: 8108
             name: http

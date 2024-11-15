@@ -43,18 +43,19 @@ kind: StatefulSet
 metadata:
   name: {{ include "typesense.fullname" . }}-ts
   labels:
-    app: typesense
+    {{- include "typesense.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "typesense.fullname" . }}-svc
-  podManagementPolicy: Parallel
+  # podManagementPolicy: Parallel
+  # updateStrategy: {}
   replicas: 3
   selector:
     matchLabels:
-      app: typesense
+      {{- include "typesense.selectorLabels" . | nindent 4 }}
   template:
     metadata:
       labels:
-        app: typesense
+        {{- include "typesense.selectorLabels" . | nindent 4 }}
     spec:
       containers:
         - name: typesense
@@ -82,6 +83,17 @@ spec:
           ports:
           - containerPort: 8108
             name: http
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            exec:
+              command:
+                - grep
+                - "true"
+                - /usr/share/health/status
           resources:
             limits:
               cpu: 1024m
@@ -90,19 +102,37 @@ spec:
               cpu: 128m
               memory: 256Mi
           volumeMounts:
-          - mountPath: /usr/share/typesense
-            name: nodeslist
-          - mountPath: /usr/share/typesense/data
-            name: data
+          - name: health
+            mountPath: /usr/share/health
+          - name: nodelist
+            mountPath: /usr/share/typesense
+          - name: data
+            mountPath: /usr/share/typesense/data
         - name: peer-resolver
           image: quay.io/opentelekomcloud/typesense-peer-resolver:1.0.2
           command:
             - "/opt/tspr"
             - "-namespace={{ .Release.Namespace }}"
-            - "-service={{ include "typesense.fullname" . }}-svc"
+            - "-service={{ include "typesense.fullname" . }}-resolver"
           volumeMounts:
           - name: nodeslist
             mountPath: /usr/share/typesense
+        - name: health-checker
+          image: busybox
+          command:
+            - sleep
+            - inf
+          readinessProbe:
+            exec:
+              command:
+                - wget
+                - -q
+                - "-O"
+                - "/usr/share/health/status"
+                - "http://localhost:8108/health"
+          volumeMounts:
+          - name: health
+            mountPath: /usr/share/health
       serviceAccountName: {{ include "typesense.fullname" . }}-service-account
       securityContext:
         fsGroup: 2000
@@ -113,7 +143,6 @@ spec:
       volumes:
       - name: nodeslist
         emptyDir: {}
-  updateStrategy: {}
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -123,7 +152,23 @@ spec:
       resources:
         requests:
           storage: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
-      storageClassName: {{ required "typesense.storage.className is required" .Values.typesense.storage.className }}
+      storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "typesense.fullname" . }}-resolver
+  labels:
+  {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+     {{- include "typesense.selectorLabels" . | nindent 4 }}
+  ports:
+  - name: http
+    port: 8108
+    targetPort: 8108
 ---
 apiVersion: v1
 kind: Service
@@ -132,10 +177,9 @@ metadata:
   labels:
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  clusterIP: None
-  publishNotReadyAddresses: true
+  type: ClusterIP
   selector:
-    app: typesense
+    {{- include "typesense.selectorLabels" . | nindent 4 }}
   ports:
   - name: http
     port: 8108

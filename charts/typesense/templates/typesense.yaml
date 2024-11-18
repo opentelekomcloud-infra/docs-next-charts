@@ -29,20 +29,11 @@ subjects:
   name: {{ include "typesense.fullname" . }}-service-account
 ---
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "typesense.fullname" . }}-nodeslist
-  labels:
-  {{- include "typesense.labels" . | nindent 4 }}
-data:
-  nodes: {{ .Release.Name }}-ts-0.{{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local:8107:8108,{{ .Release.Name }}-ts-1.{{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local:8107:8108,{{ .Release.Name }}-ts-2.{{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local:8107:8108
----
-apiVersion: v1
 kind: Secret
 metadata:
   name: {{ include "typesense.fullname" . }}-api-keys
   labels:
-  {{- include "typesense.labels" . | nindent 4 }}
+    {{- include "typesense.labels" . | nindent 4 }}
 data:
   typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey
     | b64enc | quote }}
@@ -52,66 +43,85 @@ kind: StatefulSet
 metadata:
   name: {{ include "typesense.fullname" . }}-ts
   labels:
-    app: typesense
+    app: {{ include "typesense.fullname" . }}-sts
+    {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "typesense.fullname" . }}-svc
-  podManagementPolicy: Parallel
+  serviceName: {{ include "typesense.fullname" . }}-sts-resolver
+  # podManagementPolicy: Parallel
+  # updateStrategy: {}
   replicas: 3
   selector:
     matchLabels:
-      app: typesense
+      app: {{ include "typesense.fullname" . }}-sts
   template:
     metadata:
       labels:
-        app: typesense
+        app: {{ include "typesense.fullname" . }}-sts
     spec:
       containers:
+        - name: peer-resolver
+          image: quay.io/opentelekomcloud/typesense-peer-resolver:1.0.2
+          command:
+            - "/opt/tspr"
+            - "-namespace={{ .Release.Namespace }}"
+            - "-service={{ include "typesense.fullname" . }}-sts-resolver"
+          volumeMounts:
+          - name: nodeslist
+            mountPath: /usr/share/typesense
         - name: typesense
           image: typesense/typesense:27.1
+          command:
+            - "/opt/typesense-server"
+            - "--data-dir"
+            - "/usr/share/typesense/data"
+            - "--api-port"
+            - "8108"
+            - "--api-address"
+            - "0.0.0.0"
+            - "--peering-port"
+            - "8107"
+            - "--nodes"
+            - "/usr/share/typesense/nodes"
+            - "--enable-cors"
+            - "--cors-domains"
+            - "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}, http://localhost:9089"
+            - "--reset-peers-on-error"
           env:
           - name: TYPESENSE_API_KEY
             valueFrom:
               secretKeyRef:
                 key: typesense-api-key
                 name: {{ include "typesense.fullname" . }}-api-keys
-          - name: TYPESENSE_NODES
-            value: "/usr/share/typesense/nodes"
-          - name: TYPESENSE_DATA_DIR
-            value: "/usr/share/typesense/data"
-          - name: TYPESENSE_API_PORT
-            value: "8108"
-          - name: TYPESENSE_PEERING_PORT
-            value: "8107"
-          - name: TYPESENSE_ENABLE_CORS
-            value: "true"
-          - name: TYPESENSE_CORS_DOMAINS
-            value: "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}, http://localhost:9089"
-          - name: TYPESENSE_RESET_PEERS_ON_ERROR
-            value: "true"        
           ports:
           - containerPort: 8108
             name: http
+            protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: http
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 5
+          #   failureThreshold: 2
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 2
           resources:
             limits:
               cpu: 1024m
               memory: 512Mi
             requests:
-              cpu: 128m
+              cpu: 256m
               memory: 256Mi
-          volumeMounts:
-          - mountPath: /usr/share/typesense
-            name: nodeslist
-          - mountPath: /usr/share/typesense/data
-            name: data
-        - name: peer-resolver
-          image: quay.io/opentelekomcloud/typesense-peer-resolver:1.0.2
-          command:
-            - "/opt/tspr"
-            - "-namespace={{ .Release.Namespace }}"
-            - "-service={{ include "typesense.fullname" . }}-svc"
           volumeMounts:
           - name: nodeslist
             mountPath: /usr/share/typesense
+          - name: data
+            mountPath: /usr/share/typesense/data
       serviceAccountName: {{ include "typesense.fullname" . }}-service-account
       securityContext:
         fsGroup: 2000
@@ -122,7 +132,8 @@ spec:
       volumes:
       - name: nodeslist
         emptyDir: {}
-  updateStrategy: {}
+      # - name: health
+      #   emptyDir: {}
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -132,19 +143,34 @@ spec:
       resources:
         requests:
           storage: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
-      storageClassName: {{ required "typesense.storage.className is required" .Values.typesense.storage.className }}
+      storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "typesense.fullname" . }}-sts-resolver
+  labels:
+    {{- include "typesense.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app: {{ include "typesense.fullname" . }}-sts
+  ports:
+  - name: http
+    port: 8108
+    targetPort: 8108
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "typesense.fullname" . }}-svc
   labels:
-  {{- include "typesense.labels" . | nindent 4 }}
+    {{- include "typesense.labels" . | nindent 4 }}
 spec:
-  clusterIP: None
-  publishNotReadyAddresses: true
+  type: ClusterIP
   selector:
-    app: typesense
+    app: {{ include "typesense.fullname" . }}-sts
   ports:
   - name: http
     port: 8108

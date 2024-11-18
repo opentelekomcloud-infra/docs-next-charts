@@ -35,7 +35,7 @@ spec:
                   key: typesense-api-key
                   name: {{ include "typesense.fullname" . }}-api-keys
             - name: TYPESENSE_HOST
-              value: {{ .Release.Name }}-svc.{{ .Release.Namespace }}.svc.cluster.local
+              value: {{ .Release.Name }}-sts-resolver.{{ .Release.Namespace }}.svc.cluster.local
             - name: TYPESENSE_PORT
               value: "8108"
             - name: TYPESENSE_PROTOCOL

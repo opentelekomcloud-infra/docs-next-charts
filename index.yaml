@@ -867,6 +867,20 @@ entries:
     version: 0.1.1
   typesense:
   - apiVersion: v2
+    appVersion: 27.1.0
+    created: "2024-11-18T09:10:27.147993619Z"
+    description: Open Telekom Cloud Architecture Center (typesense)
+    digest: 7fa371b6b8845b6266a8e05ab8cb7fc532463c50450638d32ec22c91ecee2cc1
+    maintainers:
+    - email: kyriakos.akriotis@t-systems.com
+      name: akyriako
+      url: https://github.com/akyriako
+    name: typesense
+    type: application
+    urls:
+    - https://github.com/opentelekomcloud-infra/docs-next-charts/releases/download/typesense-0.4.0/typesense-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
     appVersion: 26.0.0
     created: "2024-11-14T14:52:39.499138157Z"
     description: Open Telekom Cloud Architecture Center (typesense)
@@ -1195,4 +1209,4 @@ entries:
     urls:
     - https://github.com/akyriako/docs-next-charts/releases/download/umami-0.1.0/umami-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-14T14:52:39.691480892Z"
+generated: "2024-11-18T09:10:27.148470597Z"

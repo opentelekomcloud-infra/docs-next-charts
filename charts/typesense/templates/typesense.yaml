@@ -67,7 +67,7 @@ spec:
     spec:
       containers:
         - name: typesense
-          image: typesense/typesense:26.0
+          image: typesense/typesense:27.1
           env:
           - name: TYPESENSE_API_KEY
             valueFrom:
@@ -97,14 +97,14 @@ spec:
               memory: 512Mi
             requests:
               cpu: 128m
-              memory: 112Mi
+              memory: 256Mi
           volumeMounts:
           - mountPath: /usr/share/typesense
             name: nodeslist
           - mountPath: /usr/share/typesense/data
             name: data
         - name: peer-resolver
-          image: akyriako78/typesense-peer-resolver:v0.1.0-dev.3
+          image: quay.io/opentelekomcloud/typesense-peer-resolver:1.0.2
           command:
             - "/opt/tspr"
             - "-namespace={{ .Release.Namespace }}"
@@ -131,8 +131,8 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 10Gi
-      storageClassName: csi-disk
+          storage: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
+      storageClassName: {{ required "typesense.storage.className is required" .Values.typesense.storage.className }}
 ---
 apiVersion: v1
 kind: Service

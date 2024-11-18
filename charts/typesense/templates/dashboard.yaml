@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: typesense-dashboard
-          image: ghcr.io/bfritscher/typesense-dashboard:latest
+          image: quay.io/opentelekomcloud/typesense-dashboard:1.0.0
           resources: {}
 ---
 apiVersion: v1

@@ -15,6 +15,8 @@ metadata:
   {{- include "typesense.labels" . | nindent 4 }}
 spec:
   concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 0
@@ -38,7 +40,7 @@ spec:
               value: "8108"
             - name: TYPESENSE_PROTOCOL
               value: http
-            image: typesense/docsearch-scraper:0.9.1
+            image: typesense/docsearch-scraper:0.11.0
             name: typesense-scraper
             resources:
                 limits:

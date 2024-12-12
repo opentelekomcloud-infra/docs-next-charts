@@ -1,5 +1,5 @@
 typesense:
-  api-key: 
+  apiKey: 
   storage:
     size: 1Gi
     storageClassName: csi-disk

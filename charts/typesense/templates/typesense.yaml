@@ -4,7 +4,7 @@ metadata:
   name: {{ include "typesense.fullname" . }}-api-key
 type: Opaque
 data:
-  typesense-api-key: {{ required "typesense.api-key is required" .Values.typesense.api-key }}
+  typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey }}
 ---
 apiVersion: ts.opentelekomcloud.com/v1alpha1
 kind: TypesenseCluster

@@ -52,14 +52,14 @@ spec:
   tls:
   - hosts:
       - {{ required "ingress.host is required" .Values.ingress.host }}
-    secretName: {{ include "docusaurus.name" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+    secretName: {{ .Release.Name }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
   rules:
   - host: {{ required "ingress.host is required" .Values.ingress.host }}
     http:
       paths:
       - backend:
           service:
-            name: '{{ include "docusaurus.name" . }}-docusaurus'
+            name:  {{ .Release.Name }}-docusaurus
             port:
               number: 80
         path: /

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "docusaurus.name" . }}-docusaurus
+  name: {{ .Release.Name }}-docusaurus
   labels:
     app: docusaurus
   {{- include "docusaurus.labels" . | nindent 4 }}

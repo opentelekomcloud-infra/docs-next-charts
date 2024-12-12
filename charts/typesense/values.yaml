@@ -1,16 +1,13 @@
 typesense:
-  apiKey:
+  api-key: 
   storage:
+    size: 1Gi
     storageClassName: csi-disk
-    size: 40Gi
-scraper:
-  schedule: '*/2 * * * *'
-reverseProxy:
-  replicas: 1
   ingress:
     host:
-    clusterIssuer: letsencrypt-prod
-dashboard:
-  replicas: 1
-docusaurus:
-  externalUrl:
+    clusterIssuer: opentelekomcloud-letsencrypt
+  scraper:
+    collection: docs-next
+    schedule: '*/2 * * * *'
+    target:
+      host:

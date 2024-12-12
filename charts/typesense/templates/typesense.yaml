@@ -1,177 +1,29 @@
 apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ include "typesense.fullname" . }}-service-account
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: {{ include "typesense.fullname" . }}-role
-  labels:
-    app.kubernetes.io/name: {{ include "typesense.fullname" . }}
-rules:
-- apiGroups: [""]
-  resources: ["endpoints"]
-  verbs: ["get", "watch", "list"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: {{ include "typesense.fullname" . }}-role-binding
-  labels:
-    app.kubernetes.io/name: {{ include "typesense.fullname" . }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: {{ include "typesense.fullname" . }}-role
-subjects:
-- kind: ServiceAccount
-  name: {{ include "typesense.fullname" . }}-service-account
----
-apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ include "typesense.fullname" . }}-api-keys
-  labels:
-    {{- include "typesense.labels" . | nindent 4 }}
+  name: {{ include "typesense.fullname" . }}-api-key
+type: Opaque
 data:
-  typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey
-    | b64enc | quote }}
+  typesense-api-key: {{ required "typesense.api-key is required" .Values.typesense.api-key }}
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: ts.opentelekomcloud.com/v1alpha1
+kind: TypesenseCluster
 metadata:
-  name: {{ include "typesense.fullname" . }}-ts
-  labels:
-    app: {{ include "typesense.fullname" . }}-sts
-    {{- include "typesense.labels" . | nindent 4 }}
+  name: {{ include "typesense.fullname" . }}
 spec:
-  serviceName: {{ include "typesense.fullname" . }}-sts-resolver
-  # podManagementPolicy: Parallel
-  # updateStrategy: {}
+  image: typesense/typesense:27.1
   replicas: 3
-  selector:
-    matchLabels:
-      app: {{ include "typesense.fullname" . }}-sts
-  template:
-    metadata:
-      labels:
-        app: {{ include "typesense.fullname" . }}-sts
-    spec:
-      containers:
-        - name: peer-resolver
-          image: quay.io/opentelekomcloud/typesense-peer-resolver:1.0.2
-          command:
-            - "/opt/tspr"
-            - "-namespace={{ .Release.Namespace }}"
-            - "-service={{ include "typesense.fullname" . }}-sts-resolver"
-          volumeMounts:
-          - name: nodeslist
-            mountPath: /usr/share/typesense
-        - name: typesense
-          image: typesense/typesense:27.1
-          command:
-            - "/opt/typesense-server"
-            - "--data-dir"
-            - "/usr/share/typesense/data"
-            - "--api-port"
-            - "8108"
-            - "--api-address"
-            - "0.0.0.0"
-            - "--peering-port"
-            - "8107"
-            - "--nodes"
-            - "/usr/share/typesense/nodes"
-            - "--enable-cors"
-            - "--cors-domains"
-            - "http://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.docusaurus.externalUrl }},https://{{ .Values.reverseProxy.ingress.host }},http://{{ .Values.reverseProxy.ingress.host }}, http://localhost:9089"
-            - "--reset-peers-on-error"
-          env:
-          - name: TYPESENSE_API_KEY
-            valueFrom:
-              secretKeyRef:
-                key: typesense-api-key
-                name: {{ include "typesense.fullname" . }}-api-keys
-          ports:
-          - containerPort: 8108
-            name: http
-            protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /health
-          #     port: http
-          #   initialDelaySeconds: 10
-          #   periodSeconds: 5
-          #   failureThreshold: 2
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            failureThreshold: 2
-          resources:
-            limits:
-              cpu: 1024m
-              memory: 512Mi
-            requests:
-              cpu: 256m
-              memory: 256Mi
-          volumeMounts:
-          - name: nodeslist
-            mountPath: /usr/share/typesense
-          - name: data
-            mountPath: /usr/share/typesense/data
-      serviceAccountName: {{ include "typesense.fullname" . }}-service-account
-      securityContext:
-        fsGroup: 2000
-        runAsGroup: 3000
-        runAsNonRoot: true
-        runAsUser: 10000
-      terminationGracePeriodSeconds: 300
-      volumes:
-      - name: nodeslist
-        emptyDir: {}
-      # - name: health
-      #   emptyDir: {}
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
-      storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "typesense.fullname" . }}-sts-resolver
-  labels:
-    {{- include "typesense.labels" . | nindent 4 }}
-spec:
-  clusterIP: None
-  publishNotReadyAddresses: true
-  selector:
-    app: {{ include "typesense.fullname" . }}-sts
-  ports:
-  - name: http
-    port: 8108
-    targetPort: 8108
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "typesense.fullname" . }}-svc
-  labels:
-    {{- include "typesense.labels" . | nindent 4 }}
-spec:
-  type: ClusterIP
-  selector:
-    app: {{ include "typesense.fullname" . }}-sts
-  ports:
-  - name: http
-    port: 8108
-    targetPort: 8108
+  storage:
+    size: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
+    storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}
+  ingress:
+    host: {{ required "typesense.ingress.host is required" .Values.typesense.ingress.host }}
+    ingressClassName: nginx
+    clusterIssuer: {{ required "typesense.ingress.clusterIssuer is required" .Values.typesense.ingress.clusterIssuer }}
+  adminApiKey:
+    name: {{ include "typesense.fullname" . }}-api-key
+  scrapers:
+    - name: {{ include "typesense.fullname" . }}-scraper
+      image: typesense/docsearch-scraper:0.11.0
+      config: "{\"index_name\":\"{{ required "typesense.scraper.collection is required" .Values.typesense.scraper.collection }}\",\"start_urls\":[\"https://{{ required "typesense.scraper.target.host is required" .Values.typesense.scraper.target.host }}/\"],\"sitemap_urls\":[\"https://{{ required "typesense.scraper.target.host is required" .Values.typesense.scraper.target.host }}/sitemap.xml\"],\"sitemap_alternate_links\":true,\"stop_urls\":[\"/tests\"],\"selectors\":{\"lvl0\":{\"selector\":\"(//ul[contains(@class,'menu__list')]//a[contains(@class, 'menu__link menu__link--sublist menu__link--active')]/text() | //nav[contains(@class, 'navbar')]//a[contains(@class, 'navbar__link--active')]/text())[last()]\",\"type\":\"xpath\",\"global\":true,\"default_value\":\"Documentation\"},\"lvl1\":\"header h1\",\"lvl2\":\"article h2\",\"lvl3\":\"article h3\",\"lvl4\":\"article h4\",\"lvl5\":\"article h5, article td:first-child\",\"lvl6\":\"article h6\",\"text\":\"article p, article li, article td:last-child\"},\"strip_chars\":\" .,;:#\",\"custom_settings\":{\"separatorsToIndex\":\"_\",\"attributesForFaceting\":[\"language\",\"version\",\"type\",\"docusaurus_tag\"],\"attributesToRetrieve\":[\"hierarchy\",\"content\",\"anchor\",\"url\",\"url_without_anchor\",\"type\"]},\"conversation_id\":[\"833762294\"],\"nb_hits\":46250}"
+      schedule: {{ required "typesense.scraper.schedule is required" .Values.typesense.scraper.schedule | quote }}

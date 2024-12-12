@@ -4,13 +4,3 @@ tag: 20241205.14.0-932a3d4
 ingress:
   host:
   clusterIssuer: letsencrypt-prod
-typesense:
-  api-key:
-  storage:
-    size: 40Gi
-    storageClassName: csi-disk
-  ingress:
-    host:
-    clusterIssuer: letsencrypt-prod
-  scraper:
-    schedule: '*/5 * * * *'

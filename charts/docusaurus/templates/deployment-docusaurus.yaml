@@ -9,7 +9,7 @@ data:
 apiVersion: ts.opentelekomcloud.com/v1alpha1
 kind: TypesenseCluster
 metadata:
-  name: {{ include "docusaurus.fullname" . }}-ts
+  name: {{ include "docusaurus.fullname" . }}
 spec:
   image: typesense/typesense:27.1
   replicas: 3

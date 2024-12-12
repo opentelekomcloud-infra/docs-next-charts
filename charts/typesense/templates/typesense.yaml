@@ -9,7 +9,7 @@ data:
 apiVersion: ts.opentelekomcloud.com/v1alpha1
 kind: TypesenseCluster
 metadata:
-  name: {{ include "typesense.name" . }}
+  name: {{ include .Release.Name . }}
 spec:
   image: typesense/typesense:27.1
   replicas: 3

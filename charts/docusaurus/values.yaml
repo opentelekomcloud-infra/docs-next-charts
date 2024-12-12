@@ -3,4 +3,14 @@ image: quay.io/opentelekomcloud/docs-next
 tag: v0.0.1
 ingress:
   host:
-  clusterIssuer: letsencrypt-prod
+  clusterIssuer: opentelekomcloud-letsencrypt
+typesense:
+  api-key:
+  storage:
+    size: 1Gi
+    storageClassName: csi-disk
+  ingress:
+    host:
+    clusterIssuer: opentelekomcloud-letsencrypt
+  scraper:
+    schedule: '*/2 * * * *'

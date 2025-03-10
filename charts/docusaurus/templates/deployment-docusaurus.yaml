@@ -43,24 +43,28 @@ kind: Ingress
 metadata:
   name: {{ include "docusaurus.fullname" . }}-docusaurus
   labels:
-  {{- include "docusaurus.labels" . | nindent 4 }}
+    {{- include "docusaurus.labels" . | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
+    {{- if .Values.oauth2-proxy.enabled }}
+    nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oauth2-proxy.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://{{ .Values.ingress.host }}/oauth2/start?rd=$escaped_request_uri"
+    {{- end }}
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-      - {{ required "ingress.host is required" .Values.ingress.host }}
-    secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+    - hosts:
+        - {{ required "ingress.host is required" .Values.ingress.host }}
+      secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
   rules:
-  - host: {{ required "ingress.host is required" .Values.ingress.host }}
-    http:
-      paths:
-      - backend:
-          service:
-            name: '{{ include "docusaurus.fullname" . }}-docusaurus'
-            port:
-              number: 80
-        path: /
-        pathType: ImplementationSpecific
+    - host: {{ required "ingress.host is required" .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "docusaurus.fullname" . }}-docusaurus
+                port:
+                  number: 80

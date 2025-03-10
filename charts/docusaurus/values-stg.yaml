@@ -4,3 +4,39 @@ tag: 20250221.28.0-fa7594f
 ingress:
   host:
   clusterIssuer: letsencrypt-prod
+
+oauth2-proxy:
+  enabled: true
+  image:
+    repository: quay.io/oauth2-proxy/oauth2-proxy
+    tag: v7.5.1
+  config:
+    clientID: "CLIENT_ID"
+    clientSecret: "CLIENT_SECRET"
+    cookieSecret: "COOKIE_SECRET"
+    configFile: |-
+      provider = "oidc"
+      oidc_issuer_url = "https://"
+      redirect_url = "https://{{ .Values.ingress.host }}/oauth2/callback"
+      email_domains = ["*"]
+      upstreams = ["file:///dev/null"]
+      whitelist_domains = "{{ .Values.ingress.host }}"
+      cookie_domains = "{{ .Values.ingress.host }}"
+  podAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-inject-secret-oauth-config: "secret/data/path/to/oauth"
+    vault.hashicorp.com/role: "docs-next"
+    vault.hashicorp.com/agent-inject-template-oauth-config: |
+      {{`{{- with secret "secret/data/path/to/oauth" -}}`}}
+      OAUTH2_PROXY_CLIENT_ID={{ .Data.data.client_id }}
+      OAUTH2_PROXY_CLIENT_SECRET={{ .Data.data.client_secret }}
+      OAUTH2_PROXY_COOKIE_SECRET={{ .Data.data.cookie_secret }}
+      {{`{{- end }}`}}
+  extraArgs:
+    - --config=/etc/oauth2-proxy/oauth2-proxy.conf
+  command:
+    - /bin/sh
+    - -c
+    - |
+      source /vault/secrets/oauth-config
+      exec /oauth2-proxy --config=/etc/oauth2-proxy/oauth2-proxy.conf

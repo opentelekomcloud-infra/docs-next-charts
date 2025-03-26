@@ -17,8 +17,10 @@ oauth2-proxy:
       redirect_url = "https://{{ .Values.ingress.host }}"
       email_domains = ["*"]
       upstreams = ["http://docusaurus-stg-docs-next-docusaurus"]
+      insecure_oidc_allow_unverified_email = true
       whitelist_domains = "{{ .Values.ingress.host }}"
       cookie_domains = "{{ .Values.ingress.host }}"
+      allowed_groups = ["/docs-next",]
   podAnnotations:
     vault.hashicorp.com/auth-path: "auth/kubernetes_otcinfra1"
     vault.hashicorp.com/agent-inject: "true"

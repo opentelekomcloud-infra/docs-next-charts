@@ -22,7 +22,7 @@ oauth2-proxy:
   podAnnotations:
     vault.hashicorp.com/auth-path: "auth/kubernetes_otcinfra1"
     vault.hashicorp.com/agent-inject: "true"
-    vault.hashicorp.com/agent-inject-secret-oauth-config: "secret/data/docs-next/stg"
+    vault.hashicorp.com/agent-inject-secret-oauth2-proxy.conf: "secret/data/docs-next/stg"
     vault.hashicorp.com/role: "docs-next"
     vault.hashicorp.com/agent-pid-file: "/home/vault/pidfile"
     vault.hashicorp.com/agent-inject-config-apiproxy: |
@@ -30,20 +30,21 @@ oauth2-proxy:
         use_auto_auth_token = "force"
         enforce_consistency = "always"
       }
-    vault.hashicorp.com/agent-inject-template-oauth-config: |
+    vault.hashicorp.com/agent-inject-template-secrets.sh: |
       {{`{{- with secret "secret/data/docs-next/stg" -}}`}}
       OAUTH2_PROXY_CLIENT_ID={{ .Data.data.client_id }}
       OAUTH2_PROXY_CLIENT_SECRET={{ .Data.data.client_secret }}
-      OAUTH2_PROXY_COOKIE_SECRET={{ .Data.data.cookie_secret }}
+      OAUTH2_PROXY_COOKIE_SECRET={{ .Data.data.client_cookie }}
       {{`{{- end }}`}}
   command:
     - /bin/sh
     - -c
     - |
-      source /vault/secrets/oauth-config
+      . /vault/secrets/secrets.sh &&
       exec /oauth2-proxy --config=/etc/oauth2-proxy/oauth2-proxy.conf
   serviceAccount:
     name: docusaurus-stg-oauth2-proxy
   metrics:
     serviceMonitor:
       enabled: true
+  proxyVarsAsSecrets: false

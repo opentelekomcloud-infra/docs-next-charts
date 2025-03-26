@@ -23,9 +23,16 @@ oauth2-proxy:
       whitelist_domains = "{{ .Values.ingress.host }}"
       cookie_domains = "{{ .Values.ingress.host }}"
   podAnnotations:
+    vault.hashicorp.com/auth-path: "auth/kubernetes_otcinfra1"
     vault.hashicorp.com/agent-inject: "true"
     vault.hashicorp.com/agent-inject-secret-oauth-config: "secret/data/docs-next/stg"
     vault.hashicorp.com/role: "docs-next"
+    vault.hashicorp.com/agent-pid-file: "/home/vault/pidfile"
+    vault.hashicorp.com/agent-inject-config-apiproxy: |
+      api_proxy {
+        use_auto_auth_token = "force"
+        enforce_consistency = "always"
+      }
     vault.hashicorp.com/agent-inject-template-oauth-config: |
       {{`{{- with secret "secret/data/docs-next/stg" -}}`}}
       OAUTH2_PROXY_CLIENT_ID={{ .Data.data.client_id }}

@@ -11,9 +11,7 @@ oauth2-proxy:
     repository: quay.io/oauth2-proxy/oauth2-proxy
     tag: v7.8.1
   config:
-    clientID: "CLIENT_ID"
-    clientSecret: "CLIENT_SECRET"
-    cookieSecret: "COOKIE_SECRET"
+    existingSecret: ""
     configFile: |-
       provider = "oidc"
       oidc_issuer_url = "https://keycloak.eco.tsi-dev.otc-service.com/realms/eco"
@@ -50,20 +48,3 @@ oauth2-proxy:
   metrics:
     serviceMonitor:
       enabled: true
-extraObjects: |
-  {{- if .Values.oauth2-proxy.serviceAccount.enabled }}
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: {{ include "oauth2-proxy.fullname" . }}-vault-tokenreview-binding
-      labels:
-        {{- include "oauth2-proxy.labels" . | nindent 4 }}
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: system:auth-delegator
-    subjects:
-    - kind: ServiceAccount
-      name: {{ .Values.oauth2-proxy.serviceAccount.name }}
-      namespace: {{ include "oauth2-proxy.namespace" . | default .Release.Namespace }}
-  {{- end }}

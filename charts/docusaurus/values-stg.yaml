@@ -16,7 +16,7 @@ oauth2-proxy:
       oidc_issuer_url = "https://keycloak.eco.tsi-dev.otc-service.com/realms/eco"
       redirect_url = "https://{{ .Values.ingress.host }}"
       email_domains = ["*"]
-      upstreams = ["file:///dev/null"]
+      upstreams = ["http://docusaurus-stg-docs-next-docusaurus"]
       whitelist_domains = "{{ .Values.ingress.host }}"
       cookie_domains = "{{ .Values.ingress.host }}"
   podAnnotations:

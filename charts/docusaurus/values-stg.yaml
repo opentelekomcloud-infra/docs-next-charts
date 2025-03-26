@@ -45,3 +45,25 @@ oauth2-proxy:
     - |
       source /vault/secrets/oauth-config
       exec /oauth2-proxy --config=/etc/oauth2-proxy/oauth2-proxy.conf
+  serviceAccount:
+    name: docusaurus-stg-oauth2-proxy
+  metrics:
+    serviceMonitor:
+      enabled: true
+extraObjects: |
+  {{- if .Values.oauth2-proxy.serviceAccount.enabled }}
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: {{ include "oauth2-proxy.fullname" . }}-vault-tokenreview-binding
+      labels:
+        {{- include "oauth2-proxy.labels" . | nindent 4 }}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: system:auth-delegator
+    subjects:
+    - kind: ServiceAccount
+      name: {{ .Values.oauth2-proxy.serviceAccount.name }}
+      namespace: {{ include "oauth2-proxy.namespace" . | default .Release.Namespace }}
+  {{- end }}

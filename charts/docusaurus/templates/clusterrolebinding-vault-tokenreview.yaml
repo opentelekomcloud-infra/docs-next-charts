@@ -1,0 +1,21 @@
+{{- $oauthProxyValues := index .Values "oauth2-proxy" }}
+{{- if $oauthProxyValues.enabled }} 
+{{- if $oauthProxyValues.serviceAccount.name }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "docusaurus.fullname" . }}-vault-tokenreview-binding
+  labels:
+    {{- include "docusaurus.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: {{ $oauthProxyValues.serviceAccount.name }}
+  namespace: {{ $oauthProxyValues.serviceAccount.namespace | default .Release.Namespace }}
+{{- else }}
+  {{- fail (printf "oauth2-proxy is enabled, but its ServiceAccount name (.Values.\"oauth2-proxy\".serviceAccount.name) is not set. Cannot create required ClusterRoleBinding for Vault TokenReview.") }}
+{{- end }}
+{{- end }}

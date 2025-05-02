@@ -25,6 +25,10 @@ maintainers:
     url: https://github.com/akyriako
 dependencies:
   - name: oauth2-proxy
-    version: 7.12.6
+    version: 7.12.12
     repository: https://oauth2-proxy.github.io/manifests
     condition: oauth2-proxy.enabled
+  - name: redis
+    repository: https://charts.bitnami.com/bitnami
+    version: 20.13.4
+    condition: redis.enabled

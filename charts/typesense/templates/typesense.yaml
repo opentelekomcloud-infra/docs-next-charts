@@ -12,7 +12,7 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   image: {{ required "typesense.image is required" .Values.typesense.image }}
-  replicas: 3
+  replicas: {{ required "typesense.replicas are required" .Values.typesense.replicas }}
   storage:
     size: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
     storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}

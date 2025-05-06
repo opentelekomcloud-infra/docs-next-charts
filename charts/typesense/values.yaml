@@ -1,7 +1,9 @@
 typesense:
+  image: typesense/typesense:28.0
+  replicas: 3
   apiKey: 
   storage:
-    size: 1Gi
+    size: 40Gi
     storageClassName: csi-disk
   ingress:
     host:

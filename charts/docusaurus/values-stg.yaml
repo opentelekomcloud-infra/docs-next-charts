@@ -4,3 +4,67 @@ tag: 20250507.38.0-4a28779
 ingress:
   host:
   clusterIssuer: letsencrypt-prod
+
+redis:
+  enabled: true
+  architecture: standalone
+  master:
+    containerSecurityContext:
+      seccompProfile:
+        type: Unconfined
+  auth:
+   enabled: false
+
+oauth2-proxy:
+  enabled: true
+  image:
+    repository: quay.io/oauth2-proxy/oauth2-proxy
+    tag: v7.9.0
+  podAnnotations:
+    vault.hashicorp.com/auth-path: "auth/kubernetes_otcinfra1"
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "docs-next"
+    vault.hashicorp.com/agent-pid-file: "/home/vault/pidfile"
+    vault.hashicorp.com/agent-inject-config-apiproxy: |
+      api_proxy {
+        use_auto_auth_token = "force"
+        enforce_consistency = "always"
+      }
+    vault.hashicorp.com/agent-inject-template-oauth-config.conf: |
+          provider = "oidc"
+          oidc_issuer_url = "https://keycloak.eco.tsi-dev.otc-service.com/realms/eco"
+          redirect_url = "https://arch-stg.otc-service.com/oauth2/callback"
+          email_domains = ["*"]
+          upstreams = ["http://docusaurus-stg-docs-next-docusaurus"]
+          insecure_oidc_allow_unverified_email = true
+          cookie_domains = "arch-stg.otc-service.com"
+          allowed_roles = ["docusaurus-stg", "docs-next"]
+          cookie_secure = true
+          cookie_httponly = true
+          cookie_samesite = "lax"
+          session_store_type = "redis"
+          redis_connection_url = "redis://docusaurus-stg-redis-headless:6379"
+          show_debug_on_error = true
+          set_authorization_header = true
+          request_logging = true
+          auth_logging = true
+          standard_logging = true
+          skip_provider_button = true
+          oidc_groups_claim = "resource_access.docusaurus-stg.roles"
+          scope = "openid email profile"
+          pass_access_token = true
+          {{- with secret "secret/data/docs-next/stg" }}
+          cookie_secret = "{{ .Data.data.client_cookie }}"
+          client_id = "{{ .Data.data.client_id }}"
+          client_secret = "{{ .Data.data.client_secret }}"
+          {{- end }}
+  extraArgs:
+    - '--config=/vault/secrets/oauth-config.conf'
+  serviceAccount:
+    name: docusaurus-stg-oauth2-proxy
+  metrics:
+    serviceMonitor:
+      enabled: true
+  proxyVarsAsSecrets: false
+  config:
+    configFile: ""

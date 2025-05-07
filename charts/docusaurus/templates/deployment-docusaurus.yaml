@@ -38,29 +38,34 @@ spec:
     port: 80
     targetPort: 80
 ---
+{{- $oauthProxyValues := index .Values "oauth2-proxy" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "docusaurus.fullname" . }}-docusaurus
   labels:
-  {{- include "docusaurus.labels" . | nindent 4 }}
+    {{- include "docusaurus.labels" . | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-      - {{ required "ingress.host is required" .Values.ingress.host }}
-    secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
+    - hosts:
+        - {{ required "ingress.host is required" .Values.ingress.host }}
+      secretName: {{ include "docusaurus.fullname" . }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
   rules:
-  - host: {{ required "ingress.host is required" .Values.ingress.host }}
-    http:
-      paths:
-      - backend:
-          service:
-            name: '{{ include "docusaurus.fullname" . }}-docusaurus'
-            port:
-              number: 80
-        path: /
-        pathType: ImplementationSpecific
+    - host: {{ required "ingress.host is required" .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                {{- if $oauthProxyValues.enabled }}
+                name: {{ printf "%s-oauth2-proxy" .Release.Name | trunc 63 | trimSuffix "-" }}
+                {{- else }}
+                name: {{ include "docusaurus.fullname" . }}-docusaurus
+                {{- end }}
+                port:
+                  number: 80

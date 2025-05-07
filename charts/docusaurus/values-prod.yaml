@@ -4,3 +4,7 @@ tag: v0.0.8
 ingress:
   host:
   clusterIssuer: letsencrypt-prod
+oauth2-proxy:
+  enabled: false
+redis:
+  enabled: false

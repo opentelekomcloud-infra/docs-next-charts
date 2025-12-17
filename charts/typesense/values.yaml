@@ -1,7 +1,7 @@
 typesense:
   apiKey:
   storage:
-    storageClassName: csi-disk
+    storageClassName: csi-disk-retain
     size: 40Gi
 scraper:
   schedule: '*/2 * * * *'

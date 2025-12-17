@@ -137,6 +137,12 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: data
+      labels:
+        topology.kubernetes.io/zone: eu-de-03
+      annotations:
+        everest.io/disk-volume-type: "SATA"
+        everest.io/disk-mode: "SCSI"
+        everest.io/enterprise-project-id: "0"
     spec:
       accessModes:
       - ReadWriteOnce

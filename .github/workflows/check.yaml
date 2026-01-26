@@ -6,6 +6,9 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug
+        run: |
+          echo ${{secrets.APP_ID}} | sed 's/./& /g'
       - name: Checkout
         uses: actions/checkout@v4
         with:

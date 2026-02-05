@@ -1,6 +1,6 @@
 replicas: 5
 image: quay.io/opentelekomcloud/docs-next
-tag: v0.0.21
+tag: v0.0.22
 ingress:
   host:
   clusterIssuer: letsencrypt-prod

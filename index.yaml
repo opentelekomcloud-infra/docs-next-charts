@@ -2,6 +2,29 @@ apiVersion: v1
 entries:
   docs-next:
   - apiVersion: v2
+    appVersion: v0.0.25
+    created: "2026-03-27T09:50:19.55125164Z"
+    dependencies:
+    - condition: oauth2-proxy.enabled
+      name: oauth2-proxy
+      repository: https://oauth2-proxy.github.io/manifests
+      version: 7.12.12
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.13.4
+    description: Open Telekom Cloud Architecture Center (docs-next)
+    digest: 2fb6a350be9516eb958c31707ed4f1d6531905747c1ada0f53afac081a0a91b4
+    maintainers:
+    - email: kyriakos.akriotis@t-systems.com
+      name: akyriako
+      url: https://github.com/akyriako
+    name: docs-next
+    type: application
+    urls:
+    - https://github.com/opentelekomcloud-infra/docs-next-charts/releases/download/docs-next-0.3.25/docs-next-0.3.25.tgz
+    version: 0.3.25
+  - apiVersion: v2
     appVersion: v0.0.24
     created: "2026-03-10T06:34:09.239797654Z"
     dependencies:
@@ -1638,4 +1661,4 @@ entries:
     urls:
     - https://github.com/akyriako/docs-next-charts/releases/download/umami-0.1.0/umami-0.1.0.tgz
     version: 0.1.0
-generated: "2026-03-10T06:34:09.240162402Z"
+generated: "2026-03-27T09:50:19.551632164Z"

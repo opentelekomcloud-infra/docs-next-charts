@@ -70,12 +70,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: username
-              name: umami.{{ include "umami.fullname" . }}-psql.credentials.postgresql.acid.zalando.do
+              name: umami.{{ include "umami.fullname" . }}-psql.credentials.postgresql.acid.zalan.do
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: umami.{{ include "umami.fullname" . }}-psql.credentials.postgresql.acid.zalando.do
+              name: umami.{{ include "umami.fullname" . }}-psql.credentials.postgresql.acid.zalan.do
         - name: DATABASE_URL
           value: "postgres://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_DATABASE)?sslmode=require"
         image: {{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default

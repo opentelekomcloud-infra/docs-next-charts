@@ -16,10 +16,6 @@ spec:
   storage:
     size: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
     storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}
-  ingress:
-    host: {{ required "typesense.ingress.host is required" .Values.typesense.ingress.host }}
-    ingressClassName: nginx
-    clusterIssuer: {{ required "typesense.ingress.clusterIssuer is required" .Values.typesense.ingress.clusterIssuer }}
   adminApiKey:
     name: {{ include "typesense.fullname" . }}-api-key
   scrapers:

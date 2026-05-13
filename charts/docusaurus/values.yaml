@@ -1,6 +1,17 @@
-replicas: 5
+replicas: 1
+
 image: quay.io/opentelekomcloud/docs-next
-tag: v0.0.4
-ingress:
-  host:
-  clusterIssuer: opentelekomcloud-letsencrypt
+tag: 20260512.1.0-662097c-runtime
+imagePullPolicy: IfNotPresent
+
+env:
+  REACT_APP_DOCS_NEXT_HOST: 
+  REACT_APP_DOCS_NEXT_ORG: 
+  REACT_APP_TYPESENSE_PROTOCOL: https
+  REACT_APP_TYPESENSE_HOST: 
+  REACT_APP_TYPESENSE_PORT: "443"
+  REACT_APP_TYPESENSE_API_KEY: 
+  UMAMI_WEBSITE_ID: 
+  UMAMI_ANALYTICS_DOMAIN: umami-web.umami.svc.cluster.local
+  UMAMI_DATAHOST_URL: umami-web.umami.svc.cluster.local
+  UMAMI_DATA_DOMAIN: umami-web.umami.svc.cluster.local

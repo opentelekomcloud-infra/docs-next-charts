@@ -13,5 +13,5 @@ env:
   REACT_APP_TYPESENSE_API_KEY: 
   UMAMI_WEBSITE_ID: 
   UMAMI_ANALYTICS_DOMAIN: umami-web.umami.svc.cluster.local
-  UMAMI_DATAHOST_URL: umami-web.umami.svc.cluster.local
-  UMAMI_DATA_DOMAIN: umami-web.umami.svc.cluster.local
+  UMAMI_DATAHOST_URL: http://umami-web.umami.svc.cluster.local
+  UMAMI_DATA_DOMAIN: 

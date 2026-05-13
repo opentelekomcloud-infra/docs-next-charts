@@ -63,7 +63,7 @@ spec:
         - name: DB_DATABASE
           value: "umami"
         - name: DB_HOST
-          value: umami-psql.{{ .Release.Namespace }}.svc.cluster.local
+          value: "{{ include "umami.fullname" . }}-psql.{{ .Release.Namespace }}.svc.cluster.local"
         - name: DB_PORT
           value: '5432'
         - name: DB_USERNAME
@@ -77,7 +77,7 @@ spec:
               key: password
               name: umami.umami-psql.credentials.postgresql.acid.zalan.do
         - name: DATABASE_URL
-          value: "postgres://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_DATABASE)"
+          value: "postgresql://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_DATABASE)?sslmode=require"
         image: {{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default
           .Chart.AppVersion }}
         imagePullPolicy: {{ .Values.web.imagePullPolicy }}

@@ -6,6 +6,7 @@ typesense:
     size: 1Gi
     storageClassName: local-path
   scraper:
+    image: typesense/docsearch-scraper:0.12.0.rc14
     collection: docs-next
     schedule: '*/2 * * * *'
     target:

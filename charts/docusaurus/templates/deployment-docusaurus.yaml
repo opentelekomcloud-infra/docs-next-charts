@@ -1,3 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-docusaurus-env
+  labels:
+  {{- include "docusaurus.labels" . | nindent 4 }}
+data:
+  REACT_APP_VERSION: {{ .Values.tag | default .Chart.AppVersion | quote }}
+  REACT_APP_DOCS_NEXT_HOST: {{ .Values.env.REACT_APP_DOCS_NEXT_HOST | quote }}
+  REACT_APP_DOCS_NEXT_ORG: {{ .Values.env.REACT_APP_DOCS_NEXT_ORG | quote }}
+  REACT_APP_TYPESENSE_PROTOCOL: {{ .Values.env.REACT_APP_TYPESENSE_PROTOCOL | quote }}
+  REACT_APP_TYPESENSE_HOST: {{ .Values.env.REACT_APP_TYPESENSE_HOST | quote }}
+  REACT_APP_TYPESENSE_PORT: {{ .Values.env.REACT_APP_TYPESENSE_PORT | quote }}
+  REACT_APP_TYPESENSE_API_KEY: {{ .Values.env.REACT_APP_TYPESENSE_API_KEY | quote }}
+  UMAMI_WEBSITE_ID: {{ .Values.env.UMAMI_WEBSITE_ID | quote }}
+  UMAMI_ANALYTICS_DOMAIN: {{ .Values.env.UMAMI_ANALYTICS_DOMAIN | quote }}
+  UMAMI_DATAHOST_URL: {{ .Values.env.UMAMI_DATAHOST_URL | quote }}
+  UMAMI_DATA_DOMAIN: {{ .Values.env.UMAMI_DATA_DOMAIN | quote }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,6 +39,14 @@ spec:
       containers:
       - name: docusaurus
         image: {{ .Values.image }}:{{ .Values.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.imagePullPolicy | default "IfNotPresent" }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-docusaurus-env
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
         resources: {}
 ---
 apiVersion: v1
@@ -32,35 +59,10 @@ spec:
   selector:
     app: docusaurus
   {{- include "docusaurus.selectorLabels" . | nindent 4 }}
-  type: ClusterIP
+  type: NodePort
   ports:
   - name: http
     port: 80
     targetPort: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ .Release.Name }}-docusaurus
-  labels:
-  {{- include "docusaurus.labels" . | nindent 4 }}
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
-spec:
-  ingressClassName: nginx
-  tls:
-  - hosts:
-      - {{ required "ingress.host is required" .Values.ingress.host }}
-    secretName: {{ .Release.Name }}-docusaurus-{{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}-certificate-tls
-  rules:
-  - host: {{ required "ingress.host is required" .Values.ingress.host }}
-    http:
-      paths:
-      - backend:
-          service:
-            name:  {{ .Release.Name }}-docusaurus
-            port:
-              number: 80
-        path: /
-        pathType: ImplementationSpecific
+    nodePort: 38080
+    protocol: TCP

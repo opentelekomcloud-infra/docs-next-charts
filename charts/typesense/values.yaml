@@ -3,7 +3,7 @@ typesense:
   replicas: 3
   apiKey: 
   storage:
-    size: 40Gi
+    size: 1Gi
     storageClassName: local-path
   scraper:
     collection: docs-next

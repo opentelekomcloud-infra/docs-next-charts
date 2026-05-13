@@ -4,23 +4,55 @@ metadata:
   name: {{ include "typesense.fullname" . }}-api-key
 type: Opaque
 data:
-  typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey }}
+  typesense-api-key: {{ required "typesense.apiKey is required" .Values.typesense.apiKey | b64enc | quote }}
 ---
 apiVersion: ts.opentelekomcloud.com/v1alpha1
 kind: TypesenseCluster
 metadata:
   name: {{ .Release.Name }}
+
 spec:
   image: {{ required "typesense.image is required" .Values.typesense.image }}
   replicas: {{ required "typesense.replicas are required" .Values.typesense.replicas }}
+
   storage:
     size: {{ required "typesense.storage.size is required" .Values.typesense.storage.size }}
     storageClassName: {{ required "typesense.storage.storageClassName is required" .Values.typesense.storage.storageClassName }}
+
   adminApiKey:
     name: {{ include "typesense.fullname" . }}-api-key
+
+  enableCors: true
+
   scrapers:
     - name: {{ include "typesense.fullname" . }}-scraper
       image: {{ required "typesense.scraper.image is required" .Values.typesense.scraper.image }}
-      config: "{\"index_name\":\"{{ required "typesense.scraper.collection is required" .Values.typesense.scraper.collection }}\",\"start_urls\":[\"http://{{ required "typesense.scraper.target.host is required" .Values.typesense.scraper.target.host }}/\"],\"sitemap_urls\":[\"http://{{ required "typesense.scraper.target.host is required" .Values.typesense.scraper.target.host }}/sitemap.xml\"],\"sitemap_alternate_links\":true,\"stop_urls\":[\"/tests\"],\"selectors\":{\"lvl0\":{\"selector\":\"(//ul[contains(@class,'menu__list')]//a[contains(@class, 'menu__link menu__link--sublist menu__link--active')]/text() | //nav[contains(@class, 'navbar')]//a[contains(@class, 'navbar__link--active')]/text())[last()]\",\"type\":\"xpath\",\"global\":true,\"default_value\":\"Documentation\"},\"lvl1\":\"header h1\",\"lvl2\":\"article h2\",\"lvl3\":\"article h3\",\"lvl4\":\"article h4\",\"lvl5\":\"article h5, article td:first-child\",\"lvl6\":\"article h6\",\"text\":\"article p, article li, article td:last-child\"},\"strip_chars\":\" .,;:#\",\"custom_settings\":{\"separatorsToIndex\":\"_\",\"attributesForFaceting\":[\"language\",\"version\",\"type\",\"docusaurus_tag\"],\"attributesToRetrieve\":[\"hierarchy\",\"content\",\"anchor\",\"url\",\"url_without_anchor\",\"type\"]},\"conversation_id\":[\"833762294\"],\"nb_hits\":46250}"
+
+      config: {{ dict
+        "index_name" (required "typesense.scraper.collection is required" .Values.typesense.scraper.collection)
+        "start_urls" (list (printf "http://%s/" (required "typesense.scraper.target.host is required" .Values.typesense.scraper.target.host)))
+        "sitemap_urls" (list (printf "http://%s/sitemap.xml" (required "typesense.scraper.target.host is required" .Values.typesense.scraper.target.host)))
+        "sitemap_alternate_links" false
+        "stop_urls" (list "/tests")
+        "selectors" (dict
+          "lvl0" (dict
+            "selector" "nav.menu a.menu__link--active, .navbar__item.navbar__link--active"
+            "default_value" "Documentation"
+          )
+          "lvl1" "article h1, header h1"
+          "lvl2" "article h2"
+          "lvl3" "article h3"
+          "lvl4" "article h4"
+          "lvl5" "article h5"
+          "lvl6" "article h6"
+          "text" "article p, article li, article td"
+        )
+        "strip_chars" " .,;:#"
+        "custom_settings" (dict
+          "separatorsToIndex" "_"
+          "attributesForFaceting" (list "language" "version" "type" "docusaurus_tag")
+          "attributesToRetrieve" (list "hierarchy" "content" "anchor" "url" "url_without_anchor" "type")
+        )
+      | toJson | quote }}
+
       schedule: {{ required "typesense.scraper.schedule is required" .Values.typesense.scraper.schedule | quote }}
-  enableCors: true

@@ -5,9 +5,24 @@ ingress:
   host:
   clusterIssuer: letsencrypt-prod
 
+# Bitnami removed every versioned tag from docker.io/bitnami on Docker Hub and
+# moved the archive to docker.io/bitnamilegacy; only :latest remains in the old
+# repository. That is why redis-master-0 went ImagePullBackOff - the tag the
+# chart pins now 404s. Pulling from the legacy archive restores the exact same
+# image. allowInsecureImages is required because the chart otherwise refuses any
+# repository it does not recognise.
+# NOTE: bitnamilegacy is a frozen archive and receives no further updates, so
+# this unblocks staging rather than settling it - see the follow-up below.
+global:
+  security:
+    allowInsecureImages: true
+
 redis:
   enabled: true
   architecture: standalone
+  image:
+    repository: bitnamilegacy/redis
+    tag: 7.4.3-debian-12-r0
   master:
     containerSecurityContext:
       seccompProfile:

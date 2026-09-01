@@ -1,0 +1,22 @@
+{{- $oauthProxyValues := index .Values "oauth2-proxy" }}
+{{- if and $oauthProxyValues.enabled .Values.vaultAgent.enabled }}
+{{- if not .Values.vaultAgent.config }}
+  {{- fail "vaultAgent.enabled is set but vaultAgent.config (the vault-agent HCL) is empty." }}
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "docusaurus.fullname" . }}-oauth2-proxy-vault
+  labels:
+    {{- include "docusaurus.labels" . | nindent 4 }}
+data:
+  # Rendered by the vault-agent init container, which writes the oauth2-proxy
+  # config to /secrets and exits. The {{ "{{ }}" }} inside are consumed by vault,
+  # not by helm - this value is data, never passed through tpl.
+  vault-agent.hcl: |
+    {{- .Values.vaultAgent.config | nindent 4 }}
+  # Public CA of the vault in otcinfra2, so the agent verifies the certificate
+  # rather than skipping verification. No key material.
+  vault-ca.crt: |
+    {{- .Files.Get "files/vault-ca.crt" | nindent 4 }}
+{{- end }}

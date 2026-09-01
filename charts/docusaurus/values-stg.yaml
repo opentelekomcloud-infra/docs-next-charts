@@ -35,46 +35,59 @@ oauth2-proxy:
   image:
     repository: quay.io/oauth2-proxy/oauth2-proxy
     tag: v7.9.0
-  podAnnotations:
-    vault.hashicorp.com/auth-path: "auth/kubernetes_otcinfra1"
-    vault.hashicorp.com/agent-inject: "true"
-    vault.hashicorp.com/role: "docs-next"
-    vault.hashicorp.com/agent-pid-file: "/home/vault/pidfile"
-    vault.hashicorp.com/agent-inject-config-apiproxy: |
-      api_proxy {
-        use_auto_auth_token = "force"
-        enforce_consistency = "always"
-      }
-    vault.hashicorp.com/agent-inject-template-oauth-config.conf: |
-          provider = "oidc"
-          oidc_issuer_url = "https://keycloak.eco.tsi-dev.otc-service.com/realms/eco"
-          redirect_url = "https://arch-stg.otc-service.com/oauth2/callback"
-          email_domains = ["*"]
-          upstreams = ["http://docusaurus-stg-docs-next-docusaurus"]
-          insecure_oidc_allow_unverified_email = true
-          cookie_domains = "arch-stg.otc-service.com"
-          allowed_roles = ["docusaurus-stg", "docs-next"]
-          cookie_secure = true
-          cookie_httponly = true
-          cookie_samesite = "lax"
-          session_store_type = "redis"
-          redis_connection_url = "redis://docusaurus-stg-redis-headless:6379"
-          show_debug_on_error = true
-          set_authorization_header = true
-          request_logging = true
-          auth_logging = true
-          standard_logging = true
-          skip_provider_button = true
-          oidc_groups_claim = "resource_access.docusaurus-stg.roles"
-          scope = "openid email profile"
-          pass_access_token = true
-          {{- with secret "secret/data/docs-next/stg" }}
-          cookie_secret = "{{ .Data.data.client_cookie }}"
-          client_id = "{{ .Data.data.client_id }}"
-          client_secret = "{{ .Data.data.client_secret }}"
-          {{- end }}
+  # The vault-agent runs as an explicit init container rather than through the
+  # injector, matching every other workload on this estate. It authenticates,
+  # renders the config to /secrets and exits before oauth2-proxy starts.
+  hostAliases:
+    - ip: "192.168.171.133"
+      hostnames:
+        - "vault-otcinfra2.vault.svc.cluster.local"
+  extraInitContainers:
+    - name: vault-agent
+      image: hashicorp/vault:1.18.1
+      command: ["sh", "-c"]
+      args:
+        - "vault agent -config=/etc/vault/vault-agent.hcl -exit-after-auth=true"
+      env:
+        - name: "VAULT_ADDR"
+          value: "https://vault-otcinfra2.vault.svc.cluster.local:8200"
+        - name: "VAULT_CACERT"
+          value: "/etc/vault-ca/vault-ca.crt"
+      resources:
+        limits: {cpu: "100m", memory: "100Mi"}
+        requests: {cpu: "50m", memory: "50Mi"}
+      volumeMounts:
+        - {name: vault-agent-config, mountPath: "/etc/vault", readOnly: true}
+        - {name: vault-ca, mountPath: "/etc/vault-ca", readOnly: true}
+        - {name: secrets, mountPath: "/secrets"}
+        - {name: k8-tokens, mountPath: "/var/run/secrets/tokens", readOnly: true}
+        - {name: vault-home, mountPath: "/home/vault"}
+  extraVolumes:
+    - name: vault-agent-config
+      configMap:
+        name: docusaurus-stg-docs-next-oauth2-proxy-vault
+        items:
+          - {key: vault-agent.hcl, path: vault-agent.hcl}
+    - name: vault-ca
+      configMap:
+        name: docusaurus-stg-docs-next-oauth2-proxy-vault
+        items:
+          - {key: vault-ca.crt, path: vault-ca.crt}
+    - name: secrets
+      emptyDir: {}
+    - name: vault-home
+      emptyDir: {}
+    - name: k8-tokens
+      projected:
+        defaultMode: 420
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 7200
+              path: "vault-token"
+  extraVolumeMounts:
+    - {name: secrets, mountPath: "/secrets", readOnly: true}
   extraArgs:
-    - '--config=/vault/secrets/oauth-config.conf'
+    - '--config=/secrets/oauth-config.conf'
   serviceAccount:
     name: docusaurus-stg-oauth2-proxy
   metrics:
@@ -83,3 +96,59 @@ oauth2-proxy:
   proxyVarsAsSecrets: false
   config:
     configFile: ""
+
+# vault-agent configuration for the oauth2-proxy above. The {{ }} in the
+# template stanza are vault's, not helm's - this is a plain value and is never
+# passed through tpl.
+vaultAgent:
+  enabled: true
+  config: |
+    pid_file = "/home/vault/pidfile"
+    auto_auth {
+        method "kubernetes" {
+            mount_path = "auth/kubernetes_otcinfra1"
+            config = {
+                role = "docs-next"
+                token_path = "/var/run/secrets/tokens/vault-token"
+            }
+        }
+        sink "file" {
+            config = {
+                path = "/home/vault/.vault-token"
+            }
+        }
+    }
+
+    template {
+      destination = "/secrets/oauth-config.conf"
+      perms = "0664"
+      contents = <<EOT
+    provider = "oidc"
+    oidc_issuer_url = "https://keycloak.eco.tsi-dev.otc-service.com/realms/eco"
+    redirect_url = "https://arch-stg.otc-service.com/oauth2/callback"
+    email_domains = ["*"]
+    upstreams = ["http://docusaurus-stg-docs-next-docusaurus"]
+    insecure_oidc_allow_unverified_email = true
+    cookie_domains = "arch-stg.otc-service.com"
+    allowed_roles = ["docusaurus-stg", "docs-next"]
+    cookie_secure = true
+    cookie_httponly = true
+    cookie_samesite = "lax"
+    session_store_type = "redis"
+    redis_connection_url = "redis://docusaurus-stg-redis-headless:6379"
+    show_debug_on_error = true
+    set_authorization_header = true
+    request_logging = true
+    auth_logging = true
+    standard_logging = true
+    skip_provider_button = true
+    oidc_groups_claim = "resource_access.docusaurus-stg.roles"
+    scope = "openid email profile"
+    pass_access_token = true
+    {{- with secret "secret/data/docs-next/stg" }}
+    cookie_secret = "{{ .Data.data.client_cookie }}"
+    client_id = "{{ .Data.data.client_id }}"
+    client_secret = "{{ .Data.data.client_secret }}"
+    {{- end }}
+    EOT
+    }

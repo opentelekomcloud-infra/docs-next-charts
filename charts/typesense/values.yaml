@@ -10,6 +10,8 @@ reverseProxy:
   ingress:
     host:
     clusterIssuer: letsencrypt-prod
+    # Extra annotations merged over the cluster issuer the template sets.
+    annotations: {}
 dashboard:
   replicas: 1
 docusaurus:

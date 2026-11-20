@@ -75,6 +75,9 @@ metadata:
   {{- include "typesense.labels" . | nindent 4 }}
   annotations:
     cert-manager.io/cluster-issuer: {{ required "reverseProxy.ingress.clusterIssuer is required" .Values.reverseProxy.ingress.clusterIssuer }}
+    {{- with .Values.reverseProxy.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   ingressClassName: nginx
   tls:

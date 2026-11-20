@@ -4,3 +4,7 @@ tag: v0.0.1
 ingress:
   host:
   clusterIssuer: letsencrypt-prod
+  # Extra annotations merged over the ones the template sets (rewrite-target and
+  # the cluster issuer). Lets the estate configure the certificate key profile,
+  # the origin allowlist and similar per host without a chart change.
+  annotations: {}

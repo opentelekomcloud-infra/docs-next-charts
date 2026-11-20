@@ -48,6 +48,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: {{ required "ingress.clusterIssuer is required" .Values.ingress.clusterIssuer }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   ingressClassName: nginx
   tls:

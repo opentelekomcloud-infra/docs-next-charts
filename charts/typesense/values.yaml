@@ -1,7 +1,7 @@
 typesense:
   image: typesense/typesense:30.2
   replicas: 3
-  apiKey: 
+  apiKey:
   storage:
     size: 40Gi
     storageClassName: csi-disk

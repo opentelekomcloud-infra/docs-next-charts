@@ -6,6 +6,7 @@ typesense:
     size: 40Gi
     storageClassName: csi-disk
   ingress:
+    className: nginx
     host:
     clusterIssuer: letsencrypt-prod
   scraper:

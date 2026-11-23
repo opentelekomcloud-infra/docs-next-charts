@@ -1,18 +1,15 @@
 typesense:
-  apiKey:
+  image: typesense/typesense:30.2
+  replicas: 3
+  apiKey: 
   storage:
-    storageClassName: csi-disk
     size: 40Gi
-scraper:
-  schedule: '*/2 * * * *'
-reverseProxy:
-  replicas: 1
+    storageClassName: csi-disk
   ingress:
     host:
     clusterIssuer: letsencrypt-prod
-    # Extra annotations merged over the cluster issuer the template sets.
-    annotations: {}
-dashboard:
-  replicas: 1
-docusaurus:
-  externalUrl:
+  scraper:
+    collection: docs-next
+    schedule: '*/15 * * * *'
+    target:
+      host:

@@ -1,6 +1,13 @@
 typesense:
   image: typesense/typesense:30.2
   replicas: 3
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
   apiKey:
   storage:
     size: 40Gi
